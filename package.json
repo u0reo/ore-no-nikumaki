@@ -1,0 +1,45 @@
+{
+  "name": "ore-no-nikumaki",
+  "private": true,
+  "description": "俺の肉巻き",
+  "repository": {
+    "type": "git",
+    "url": "https://reolink00@bitbucket.org/reolink00/ore-no-nikumaki.git"
+  },
+  "author": "reolink <reolink00@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "webpack-serve",
+    "release": "npm run release:build & npm run release:deploy",
+    "release:build": "webpack -p",
+    "release:deploy": "firebase deploy --only hosting"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.5",
+    "babel-preset-es2015": "^6.24.1",
+    "css-loader": "^1.0.0",
+    "extract-loader": "^2.0.1",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "file-loader": "^1.1.11",
+    "firebase-tools": "^3.19.3",
+    "node-sass": "^4.9.2",
+    "sass-loader": "^7.0.3",
+    "webpack": "^4.16.2",
+    "webpack-cli": "^3.1.0",
+    "webpack-serve": "^2.0.2"
+  },
+  "dependencies": {
+    "@material/button": "^0.37.1",
+    "@material/card": "^0.37.1",
+    "@material/dialog": "^0.37.1",
+    "@material/list": "^0.37.1",
+    "@material/ripple": "^0.37.1",
+    "@material/textfield": "^0.37.1",
+    "@material/typography": "^0.37.1",
+    "firebase": "^5.3.0",
+    "material-design-icons": "^3.0.1",
+    "node-sass-package-importer": "^5.2.0",
+    "swiper": "^4.3.5"
+  }
+}

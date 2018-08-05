@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>俺の肉巻き 受付用</title>
+    <link rel="stylesheet" href="bundle.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/favicon.ico">
+    <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" sizes="57x57" href="/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/icon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/icon-96x96.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="/icon-256x256.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512x512.png">
+  </head>
+  <body>
+    <div class="column">
+      <h2 class="mdc-typography--headline3">新規オーダー</h2>
+      <h3 id="longest-wait" class="mdc-typography--headline5">最長待ち時間: XX分</h3>
+      <h3 id="nonfinished-count" class="mdc-typography--headline5">未処理数: XX個</h3>
+      <div>
+        <div class="order-input-container mdc-text-field mdc-text-field--outlined">
+          <input id="order-num" type="number" id="order-num-outlined" class="mdc-text-field__input" value="100" min="0">
+          <label for="order-num-outlined" class="mdc-floating-label">注文番号</label>
+          <div class="mdc-notched-outline">
+            <svg>
+              <path class="mdc-notched-outline__path" />
+            </svg>
+          </div>
+          <div class="mdc-notched-outline__idle"></div>
+        </div>
+        <button class="mdc-button mdc-button--unelevated button-up">＋</button>
+        <button class="mdc-button mdc-button--unelevated button-down">－</button>
+      </div>
+      <div>
+        <div class="order-input-container mdc-text-field mdc-text-field--outlined">
+          <input id="order-yakiniku-count" type="number" id="order-yakiniku-count-outlined" class="mdc-text-field__input" value="0" min="0">
+          <label for="order-yakiniku-count-outlined" class="mdc-floating-label">個数(焼き肉のたれ)</label>
+          <div class="mdc-notched-outline">
+            <svg>
+              <path class="mdc-notched-outline__path" />
+            </svg>
+          </div>
+          <div class="mdc-notched-outline__idle"></div>
+        </div>
+        <button class="mdc-button mdc-button--unelevated button-up">＋</button>
+        <button class="mdc-button mdc-button--unelevated button-down">－</button>
+      </div>
+      <div>
+        <div class="order-input-container mdc-text-field mdc-text-field--outlined">
+          <input id="order-shio-count" type="number" id="order-shio-count-outlined" class="mdc-text-field__input" value="0" min="0">
+          <label for="order-shio-count-outlined" class="mdc-floating-label">個数(しおだれ)</label>
+          <div class="mdc-notched-outline">
+            <svg>
+              <path class="mdc-notched-outline__path" />
+            </svg>
+          </div>
+          <div class="mdc-notched-outline__idle"></div>
+        </div>
+        <button class="mdc-button mdc-button--unelevated button-up">＋</button>
+        <button class="mdc-button mdc-button--unelevated button-down">－</button>
+      </div>
+      <button id="order-send" class="mdc-button mdc-button--raised">オーダー</button>
+      <aside id="order-confirm" class="mdc-dialog" role="alertdialog" aria-labelledby="order-confirm-label" aria-describedby="order-confirm-description">
+        <div class="mdc-dialog__surface">
+          <header class="mdc-dialog__header">
+            <h2 id="order-confirm-label" class="mdc-dialog__header__title">
+              オーダー確認(必ず、お客様に確認！)
+            </h2>
+          </header>
+          <section id="order-confirm-description" class="mdc-dialog__body"></section>
+          <footer class="mdc-dialog__footer">
+            <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--cancel">キャンセル</button>
+            <button id="order-confirm-ok" type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept" disabled>OK</button>
+          </footer>
+        </div>
+        <div class="mdc-dialog__backdrop"></div>
+      </aside>
+    </div>
+    <div class="column">
+      <h2 id="time" class="mdc-typography--headline4">初期化中...</h2>
+      <h3 class="mdc-typography--headline5">タイムテーブル</h3>
+      <div id="time-table-container">
+        <table class="header-table">
+          <thead><tr><th>時刻</th><th colspan="6">メンバー</th></tr></thead>
+        </table>
+        <div class="body-table">
+          <table id="time-table">
+            <tbody><tr><td>9/15 9:00</td><td>浅野</td><td>安藤</td><td>飯澤</td><td>有賀</td><td>植竹</td><td>太田</td></tr></tbody>
+            <tbody><tr><td>9/15 9:00</td><td>浅野</td><td>安藤</td><td>飯澤</td><td>有賀</td><td>植竹</td><td>太田</td></tr></tbody>
+            <tbody><tr><td>9/15 9:00</td><td>浅野</td><td>安藤</td><td>飯澤</td><td>有賀</td><td>植竹</td><td>太田</td></tr></tbody>
+            <tbody><tr><td>9/15 9:00</td><td>浅野</td><td>安藤</td><td>飯澤</td><td>有賀</td><td>植竹</td><td>太田</td></tr></tbody>
+            <tbody><tr><td>9/15 9:00</td><td>浅野</td><td>安藤</td><td>飯澤</td><td>有賀</td><td>植竹</td><td>太田</td></tr></tbody>
+            <tbody><tr><td>9/15 9:00</td><td>浅野</td><td>安藤</td><td>飯澤</td><td>有賀</td><td>植竹</td><td>太田</td></tr></tbody>
+            <tbody><tr><td>9/15 9:00</td><td>浅野</td><td>安藤</td><td>飯澤</td><td>有賀</td><td>植竹</td><td>太田</td></tr></tbody>
+            <tbody><tr><td>9/15 9:00</td><td>浅野</td><td>安藤</td><td>飯澤</td><td>有賀</td><td>植竹</td><td>太田</td></tr></tbody>
+            <tbody><tr><td>9/15 9:00</td><td>浅野</td><td>安藤</td><td>飯澤</td><td>有賀</td><td>植竹</td><td>太田</td></tr></tbody>
+            <tbody><tr><td>9/15 9:00</td><td>浅野</td><td>安藤</td><td>飯澤</td><td>有賀</td><td>植竹</td><td>太田</td></tr></tbody>
+            <tbody><tr><td>9/15 9:00</td><td>浅野</td><td>安藤</td><td>飯澤</td><td>有賀</td><td>植竹</td><td>太田</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      
+      <h3 class="mdc-typography--headline5">レビュー</h3>
+      <div id="review-table-container">
+        <table class="header-table">
+          <thead><tr><th class="review-table-star">☆☆☆☆☆</th><th>内容</th></tr></thead>
+        </table>
+        <div class="body-table">
+          <table id="review-table">
+            <tbody><tr><td class="review-table-star">★★★★★</td><td>おいしかった！</tr></tbody>
+            <tbody><tr><td class="review-table-star">★★★☆☆</td><td>まぁまぁかな</tr></tbody>
+            <tbody><tr><td class="review-table-star">★★★★★</td><td>おいしかった！</tr></tbody>
+            <tbody><tr><td class="review-table-star">★★★☆☆</td><td>まぁまぁかな</tr></tbody>
+            <tbody><tr><td class="review-table-star">★★★★★</td><td>おいしかった！</tr></tbody>
+            <tbody><tr><td class="review-table-star">★★★☆☆</td><td>まぁまぁかな</tr></tbody>
+            <tbody><tr><td class="review-table-star">★★★★★</td><td>おいしかった！</tr></tbody>
+            <tbody><tr><td class="review-table-star">★★★☆☆</td><td>まぁまぁかな</tr></tbody>
+            <tbody><tr><td class="review-table-star">★★★★★</td><td>おいしかった！</tr></tbody>
+            <tbody><tr><td class="review-table-star">★★★☆☆</td><td>まぁまぁかな</tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <script src="js/recept.bundle.js" async></script>
+  </body>
+</html>
