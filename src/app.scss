@@ -143,9 +143,11 @@ h2, h3, h4 {
   .mdc-card { margin: 10px; }
   .mdc-card__media {
     max-height: 400px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    overflow: hidden;
+    video {
+      height: 100%;
+      width: 100%;
+    }
   }
   .card-primary *, .card-secondary * { margin: 0; }
   .card-primary { padding: 1rem; }

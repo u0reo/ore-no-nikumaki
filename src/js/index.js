@@ -108,7 +108,9 @@ db.collection('articles').get().then((snapshot) => {
         slide.className = 'swiper-slide';
         slide.innerHTML = 
         '<div class="mdc-card mdc-ripple-upgraded">'+
-          '<div class="mdc-card__media mdc-card__media--square">読み込み中...</div>'+
+            (data.video ?
+                '<div class="mdc-card__media mdc-card__media--square"><video autoplay loop>読み込み中...</video></div>':
+                '<div class="mdc-card__media mdc-card__media--square">読み込み中...</div>')+
           '<div class="card-primary">'+
             '<h2 class="mdc-typography--headline6"></h2>'+
             '<h3 class="mdc-typography--subtitle2"></h3>'+
@@ -118,10 +120,15 @@ db.collection('articles').get().then((snapshot) => {
         slide.getElementsByClassName('mdc-typography--headline6')[0].textContent = data.title;
         slide.getElementsByClassName('mdc-typography--subtitle2')[0].textContent = data.subtitle;
         slide.getElementsByClassName('mdc-typography--body2')[0].textContent = data.body;
-        storageRef.child(doc.id + '.jpg').getDownloadURL().then((url) => {
-            slide.getElementsByClassName('mdc-card__media')[0].textContent = '';
-            slide.getElementsByClassName('mdc-card__media')[0].style.backgroundImage = 'url(' + url + ')';
-        });
+        if (data.video)
+            storageRef.child(doc.id + '.mp4').getDownloadURL().then((url) => {
+                slide.getElementsByClassName('mdc-card__media')[0].childNodes[0].src = url;
+            });
+        else
+            storageRef.child(doc.id + '.jpg').getDownloadURL().then((url) => {
+                slide.getElementsByClassName('mdc-card__media')[0].textContent = '';
+                slide.getElementsByClassName('mdc-card__media')[0].style.backgroundImage = 'url(' + url + ')';
+            });
         new MDCRipple(slide.getElementsByClassName('mdc-card')[0]);
         smallBlog.insertBefore(slide, smallBlog.firstChild)
     });
