@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+        @page {
+            size: 58mm 297mm
+        }
+
+        html {
+          height: 297mm;
+          width: 58mm;
+          margin: -1px;
+          padding: 0;
+          border: solid 1px;
+        }
+
+        body {
+          margin: 4mm;
+        }
+
+        p {
+          margin: 0.5mm 0;
+        }
+
+        div {
+          margin: 3mm 0;
+          font-size: 9pt;
+        }
+
+        hr {
+          border-width: 0.3mm 0 0 0;
+          border-style: dashed;
+          border-color: black;
+          height: 0.3mm;
+        }
+
+        #title-icon {
+          display: inline-block;
+          width: 10mm;
+          height: 10mm;
+          margin: 0 1mm;
+          background-color: black;
+          mask: url(nikumaki-icon.svg) no-repeat 100% 100%;
+          -webkit-mask: url(nikumaki-icon.svg) no-repeat 100% 100%;
+          mask-size: cover;
+          -webkit-mask-size: cover;
+        }
+
+        #title-text {
+          display: inline-block;
+          margin: 1mm 1mm 0;
+          font-size: 6mm;
+          font-family: 游明朝;
+          font-weight: 600;
+          letter-spacing: 0.05em;
+        }
+
+        .center {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .right {
+          text-align: right;
+        }
+
+        .l { float: left; }
+        .r { float: right; }
+        .rr { clear: both; text-align: right; }
+        .c { clear: both; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <div class="center" style="margin: 5mm 0;">
+      <div id="title-icon"></div>
+      <div id="title-text">俺の肉巻き</div>
+    </div>
+    <div class="right" style="font-size: 7.5pt;">
+      <p>筑波大学附属高校 127-3</p>
+      <p>第61回 桐陰祭 食販団体</p>
+      <p>https://俺たちの肉巻き.tk</p>
+    </div>
+    <div>
+      <p>2018年9月15日(土) 9:54:37</p>
+      <p>受付:127301, 127302</p>
+    </div>
+    <hr>
+    <div style="font-size: 11pt; letter-spacing: 0.05em">
+      <!-- ここは自動挿入 -->
+      <p class="l">肉巻き</p>
+      <p class="r">2個</p>
+      <p class="rr">\300</p>
+    </div>
+    <hr>
+    <div class="right" style="font-size: 12pt; letter-spacing: 0.05em">
+      <p>合計</p>
+      <p>\300</p>
+      <p style="font-size: 9pt;">桐陰祭金券</p>
+      <p style="font-size: 9pt;">\300</p>
+    </div>
+    <div class="center" style="margin: 10mm 0 3mm">
+      <p style="padding: 2mm 5mm 1.5mm; background-color: black; color:white; font-size: 30pt;">1178</p>
+    </div>
+    <div class="c" style="font-size: 7pt">
+      当店では注文を受けてから調理しています。そのためモニターにこちらの番号が出るまで、今しばらくお待ちください。
+    </div>
+    <div class="center" style="margin: 5mm 0">
+      <div id="QRCode"></div>
+    </div>
+    <div class="c" style="font-size: 8pt;">
+      <p>上のQRコードを読み込むか、</p>
+      <p style="text-decoration: underline;">https://俺の肉巻き.tk</p>
+      <p>シークレットコード:A3Xygb7</p>
+      <p>を入力することでお手持ちのスマホを引換券代わりにできます。
+        また、順番を確認でき、出来立て通知(※対応機種のみ)も受け取ることができます。</p>
+    </div>
+  </body>
+  <script type="text/javascript" src="js/qrcode.min.js"></script>
+  <script type="text/javascript">
+    var qr = new QRCode(document.getElementById('QRCode'), {
+      text: 'https://xn--w8j5c142j0ylyx4b.tk/?p=12345678',
+      width: 120,
+      height: 120,
+      correctLevel : QRCode.CorrectLevel.H
+    });
+  </script>
+</html>
