@@ -11,9 +11,10 @@
         html {
           height: 297mm;
           width: 58mm;
-          margin: -1px;
           padding: 0;
-          border: solid 1px;
+          font-family: 'メイリオ';
+          /*margin: -1px;
+          border: solid 1px;*/
         }
 
         body {
@@ -41,26 +42,30 @@
           width: 10mm;
           height: 10mm;
           margin: 0 1mm;
-          background-color: black;
-          mask: url(nikumaki-icon.svg) no-repeat 100% 100%;
-          -webkit-mask: url(nikumaki-icon.svg) no-repeat 100% 100%;
+          /*background-color: black;
+          mask: url('nikumaki-icon.svg') no-repeat 100% 100%;
+          -webkit-mask: url('nikumaki-icon.svg') no-repeat 100% 100%;
           mask-size: cover;
-          -webkit-mask-size: cover;
+          -webkit-mask-size: cover;*/
         }
 
         #title-text {
           display: inline-block;
           margin: 1mm 1mm 0;
           font-size: 6mm;
-          font-family: 游明朝;
+          font-family: '游明朝';
           font-weight: 600;
           letter-spacing: 0.05em;
+        }
+
+        @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+          #title-text { margin-top: 1.5mm; }
         }
 
         .center {
           display: flex;
           justify-content: center;
-          align-items: center;
+          align-items: flex-start;
         }
 
         .right {
@@ -75,7 +80,9 @@
   </head>
   <body>
     <div class="center" style="margin: 5mm 0;">
-      <div id="title-icon"></div>
+      <div id="title-icon">
+        <img src="nikumaki-black-icon.svg" style="height: 100%; width: 100%;"/>
+      </div>
       <div id="title-text">俺の肉巻き</div>
     </div>
     <div class="right" style="font-size: 7.5pt;">
