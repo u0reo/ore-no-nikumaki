@@ -3,9 +3,11 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <style type="text/css">
         @page {
-            size: 58mm 297mm
+            size: 58mm 250mm;/*297mm;*/
+            margin: 5mm;
         }
 
         html {
@@ -13,21 +15,24 @@
           width: 58mm;
           padding: 0;
           font-family: 'メイリオ';
+          font-weight: 500;
+          -webkit-print-color-adjust: exact;
+          zoom: 1.335;
           /*margin: -1px;
           border: solid 1px;*/
         }
 
         body {
-          margin: 4mm;
+          margin: 5mm;
         }
 
         p {
-          margin: 0.5mm 0;
+          margin: -0.5mm 0;
         }
 
         div {
           margin: 3mm 0;
-          font-size: 9pt;
+          font-size: 8pt;
         }
 
         hr {
@@ -74,8 +79,8 @@
 
         .l { float: left; }
         .r { float: right; }
-        .rr { clear: both; text-align: right; }
         .c { clear: both; text-align: center; }
+        .cc { clear: both; margin: 0.5mm 0; }
     </style>
   </head>
   <body>
@@ -85,53 +90,101 @@
       </div>
       <div id="title-text">俺の肉巻き</div>
     </div>
-    <div class="right" style="font-size: 7.5pt;">
+    <div class="right" style="font-size: 6pt;">
       <p>筑波大学附属高校 127-3</p>
       <p>第61回 桐陰祭 食販団体</p>
       <p>https://俺たちの肉巻き.tk</p>
     </div>
     <div>
-      <p>2018年9月15日(土) 9:54:37</p>
-      <p>受付:127301, 127302</p>
+      <p id="datetime">2018年9月15日(土) 9:54:37</p>
+      <p id="receptnum">受付:127301, 127302</p>
     </div>
     <hr>
-    <div style="font-size: 11pt; letter-spacing: 0.05em">
+    <div id="orderlist" style="font-size: 9pt;">
       <!-- ここは自動挿入 -->
-      <p class="l">肉巻き</p>
+      <!--<p class="l">肉巻き</p>
       <p class="r">2個</p>
-      <p class="rr">\300</p>
+      <div class="cc"></div>
+      <p class="r">\300</p>
+      <div class="cc"></div>-->
     </div>
     <hr>
-    <div class="right" style="font-size: 12pt; letter-spacing: 0.05em">
-      <p>合計</p>
-      <p>\300</p>
-      <p style="font-size: 9pt;">桐陰祭金券</p>
-      <p style="font-size: 9pt;">\300</p>
+    <div class="right" style="font-size: 11pt;">
+      <p class="l">合計</p>
+      <p id="total" class="r">\300</p>
+      <div class="cc"></div>
+      <p class="l" style="font-size: 9pt;">桐陰祭金券</p>
+      <p id="totalK" class="r" style="font-size: 9pt;">\300</p>
     </div>
-    <div class="center" style="margin: 10mm 0 3mm">
-      <p style="padding: 2mm 5mm 1.5mm; background-color: black; color:white; font-size: 30pt;">1178</p>
+    <div class="center" style="margin: 12mm 0 2mm">
+      <p id="num" style="padding: 1.5mm 3mm 1mm; background-color: black !important; color:white; font-size: 24pt;">1178</p>
     </div>
-    <div class="c" style="font-size: 7pt">
+    <div class="c" style="font-size: 6pt">
       当店では注文を受けてから調理しています。そのためモニターにこちらの番号が出るまで、今しばらくお待ちください。
     </div>
-    <div class="center" style="margin: 5mm 0">
-      <div id="QRCode"></div>
-    </div>
-    <div class="c" style="font-size: 8pt;">
+    <div id="QRCode" class="center" style="margin: 5mm 0 2mm"></div>
+    <div class="c" style="font-size: 7pt;">
       <p>上のQRコードを読み込むか、</p>
       <p style="text-decoration: underline;">https://俺の肉巻き.tk</p>
-      <p>シークレットコード:A3Xygb7</p>
-      <p>を入力することでお手持ちのスマホを引換券代わりにできます。
-        また、順番を確認でき、出来立て通知(※対応機種のみ)も受け取ることができます。</p>
+      <p>シークレットコード:<b id="secret"></b></p>
+      <p>を入力することでスマホを引換券代わりに！
+        また、順番確認や出来立て通知も。(※対応機種のみ)</p>
+    </div>
+    <div class="c" style="border: dotted 0.5px black; padding: 0 1mm 1mm; margin: 5mm 0 0;">
+      <p style="position: relative; top: -2mm; background-color: white !important; display: inline-block;">☆クラスからのメッセージ☆</p>
+      <p id="message" style="font-size: 7pt; margin-top: -2.5mm;">真ん中のあたりを箸で持って見るとおいしく見えます！ぜひお試しあれ</p>
     </div>
   </body>
   <script type="text/javascript" src="js/qrcode.min.js"></script>
   <script type="text/javascript">
+    var data = new Object();
+    Array.prototype.slice.call(location.search.substring(1).split('&'), 0).forEach(function(item, index, array){
+      var kv = item.split('=');
+      data[kv[0]]=kv[1];
+    });
+    document.getElementById('num').textContent = data['num'];
+    document.getElementById('secret').textContent = data['secret'];
+    document.getElementById('receptnum').textContent = '受付:' + data['receptnum'].replace(/-/g, ',');
+    document.getElementById('datetime').textContent = convertUnix(data['datetime']);
+    var orderCount = 0;
+    document.getElementById('orderlist').innerHTML += order('焼き肉のたれ味セット', data['taretare']);
+    document.getElementById('orderlist').innerHTML += order('塩味セット', data['shioshio']);
+    document.getElementById('orderlist').innerHTML += order('たれ味塩味コンビ', data['tareshio']);
+    var t = '\\' + 150 * orderCount;
+    document.getElementById('total').textContent = t;
+    document.getElementById('totalK').textContent = t;
+    //document.getElementById('message').textContent = '';
+
     var qr = new QRCode(document.getElementById('QRCode'), {
-      text: 'https://xn--w8j5c142j0ylyx4b.tk/?p=12345678',
-      width: 120,
-      height: 120,
+      text: 'https://xn--w8j5c142j0ylyx4b.tk/?s=' + data['secret'],
+      width: 100,
+      height: 100,
       correctLevel : QRCode.CorrectLevel.H
     });
+
+    function convertUnix(intTime){
+      var d = new Date( intTime * 1000 );
+      var year  = d.getFullYear();
+      var month = d.getMonth() + 1;
+      var day  = d.getDate();
+      var dayOfWeek = [ "日", "月", "火", "水", "木", "金", "土" ][d.getDay()];
+      var hour = ( '0' + d.getHours() ).slice(-2);
+      var min  = ( '0' + d.getMinutes() ).slice(-2);
+      var sec   = ( '0' + d.getSeconds() ).slice(-2);
+      return( year + '年' + month + '月' + day + '日(' + dayOfWeek + ') ' + hour + ':' + min + ':' + sec );
+    }
+
+    function order(name, count){
+      if (!count) return '';
+      var i = parseInt(count);
+      if (i <= 0) return '';
+      orderCount += i;
+      return(
+        '<p class="l">' + name + '</p>' +
+        '<p class="r">' + i.toString() + '個</p>' +
+        '<div class="cc"></div>' +
+        '<p class="r">\\' + (150 * i).toString() + '</p>' +
+        '<div class="cc"></div>');
+    }
   </script>
 </html>

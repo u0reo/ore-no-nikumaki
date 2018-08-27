@@ -37,8 +37,9 @@ Array.from(document.querySelectorAll('.button-down'), e => {
 setInterval(() => { document.getElementById('time').innerHTML = new Date().toLocaleString(); }, 1000);
 
 var confirmOK = -1;
+var lastOrderData = null;
 document.getElementById('order-send').addEventListener('click', () => {
-    if (parseInt(document.getElementById('order-yakiniku-count').value) <= 0 && document.getElementById('order-shio-count').value <= 0)
+    if (parseInt(document.getElementById('order-taretare-count').value) <= 0 && document.getElementById('order-shioshio-count').value <= 0)
         alert('個数が0です、1個以上にしてください。')
     else
         checkTicketDB(document.getElementById('order-num').value, (num) => {
@@ -46,25 +47,59 @@ document.getElementById('order-send').addEventListener('click', () => {
             document.getElementById('order-confirm-ok').disabled = true;
             document.getElementById('order-confirm-description').innerText = 
                 '受付番号: ' + num + '\n' +
-                '個数(タレ:しょうゆ): ' + document.getElementById('order-yakiniku-count').value + '\n' +
-                '個数(タレ:しお): ' + document.getElementById('order-shio-count').value + '\n\n' +
-                '3秒経つとOKが押せるようになります';
+                '焼き肉のたれ味セット: ' + document.getElementById('order-taretare-count').value + '\n' +
+                '塩味: ' + document.getElementById('order-shioshio-count').value + '\n\n' +
+                '確定すると自動でレシートが印刷されます\n\n' +
+                '3秒経つと「オーダー確定」が押せるようになります';
             orderDialog.show();
             confirmOK = setTimeout(() => { document.getElementById('order-confirm-ok').disabled = false; }, 3000);
         });
 });
 orderDialog.listen('MDCDialog:accept', () => {
     let num = document.getElementById('order-num');
-    addTicketDB(num.value, document.getElementById('order-yakiniku-count').value, document.getElementById('order-shio-count').value);
-    num.value = parseInt(on.value) + 1;
-})
+    addTicketDB(num.value, document.getElementById('order-taretare-count').value, document.getElementById('order-shioshio-count').value);
+    printReceipt(lastOrderData);
+    document.getElementById('printing-retry').disabled = false;
+    document.getElementById('printing-retry').textContent = 'レシート(' + lastOrderData.num + ')の再印刷'
+    num.value = parseInt(num.value) + 1;
+});
+document.getElementById('printing-retry').addEventListener('click', () => {
+    printReceipt(lastOrderData);
+});
+
+function printReceipt(data){
+    var url = 'AutoPrint://?';
+    Object.keys(data).forEach((key) => {
+        if (key === 'datetime')
+            url += key + '=' + data[key].seconds + '&';
+        else
+            url += key + '=' + data[key] + '&';
+    });
+    url += 'receptnum=' + '127301';////////////////////////////////
+    console.log(url);
+    document.getElementById('hidden-frame').contentDocument.location.replace(url);
+}
 
 const db = firebase.firestore();
 db.settings({ timestampsInSnapshots: true });
 const orders = db.collection('orders');
+const general = orders.doc('general');
 
-orders.orderBy('num', 'desc').limit(1).get().then((Snapshot) => {
-    let num = (Snapshot.empty ? 100 : (Snapshot.docs[0].data().num + 1));
+var targetTime = 600;
+var estimateTime = 600;
+var itemCount = 0;
+var riceCount = 0;
+
+general.onSnapshot((snapshot) => {
+    let d = snapshot.data();
+    targetTime = d.targetTime;
+    estimateTime = d.estimateTime;
+    itemCount = d.itemCount;
+    riceCount = d.riceCount;
+});
+
+orders.orderBy('num', 'desc').limit(1).get().then((snapshot) => {
+    let num = (snapshot.empty ? 100 : (snapshot.docs[0].data().num + 1));
     document.getElementById('order-num').value = num;
 });
 
@@ -77,36 +112,41 @@ function checkTicketDB(num, callback) {
     });
 }
 
-function addTicketDB(num, yakinikuCount, shioCount) {
-    orders.doc(num).set({ num: parseInt(num), yakinikuCount: parseInt(yakinikuCount), shioCount: parseInt(shioCount),
-        date: firebase.firestore.Timestamp.now(), finish: false, cancel: false });
+function addTicketDB(num, taretare, shioshio) {
+    lastOrderData = { num: parseInt(num), secret: createCode(),
+        taretare: parseInt(taretare), shioshio: parseInt(shioshio), tareshio: 0,/////////////////////////////
+        datetime: firebase.firestore.Timestamp.now(), call: false, hand: false, cancel: false };
+    orders.doc(num).set(lastOrderData);
+    general.update({ itemCount: itemCount + taretare + shioshio });
 }
 
-const refresh = (querySnapshot) => {
-    console.log('refresh');
+//ランダム文字列生成
+function createCode(){
+    var c = "abcdefghijklmnopqrstuvwxyz0123456789";
+    var r = "";
+    for (var i = 0; i < 8; i++) {
+        r += c[Math.floor(Math.random() * c.length)];
+    }
+    return r;
+}
+
+const refresh = (snapshot) => {
     let count = 0;
-    querySnapshot.forEach((doc) => {
-        count += parseInt(doc.data().yakinikuCount);
-        count += parseInt(doc.data().shioCount);
+    snapshot.forEach((doc) => {
+        count += parseInt(doc.data().taretare);
+        count += parseInt(doc.data().shioshio);
     });
-    document.getElementById('nonfinished-count').textContent = '未処理数: ' + count + '個';
-    if (!querySnapshot.empty)
-        document.getElementById('longest-wait').textContent = '最長待ち時間: ' +
-            Math.ceil((firebase.firestore.Timestamp.now().seconds - querySnapshot.docs[0].data().date.seconds) / 60) + '分';
+    document.getElementById('nonfinished-count').textContent = '未完成数: ' + count + '個';
+    document.getElementById('longest-wait').textContent = '最長待ち時間: ' + (snapshot.empty ? 'なし' :
+            Math.ceil((new Date().getTime() - snapshot.docs[0].data().datetime.toDate().getTime()) / 60000) + '分');
     clearInterval(forceRefreshIndex);
     forceRefreshIndex = setInterval(forceRefresh, 60000);
 }
 
-var ordersQuery = orders.where('cancel', '==', false).where('finish', '==', false).orderBy('date');
+var ordersQuery = orders.where('cancel', '==', false).where('hand', '==', false).orderBy('datetime');
 ordersQuery.onSnapshot(refresh);
 
 var forceRefreshIndex;
 const forceRefresh = () => {
     ordersQuery.get().then(refresh);
 }
-
-/*orders.get().then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-        console.log(doc);
-    });
-});*/

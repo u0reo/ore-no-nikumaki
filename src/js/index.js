@@ -19,7 +19,7 @@ import { MDCDialog } from '@material/dialog';
 //import Swiper from "swiper";
 Array.from(document.querySelectorAll('.mdc-text-field'), e => new MDCTextField(e));
 Array.from(document.querySelectorAll('.mdc-button'), e => new MDCRipple(e));
-const reviewDialog = new MDCDialog(document.getElementById('review-confirm'));
+//const reviewDialog = new MDCDialog(document.getElementById('review-confirm'));
 const gallery = new Swiper('#gallery', {
     loop: true,
     centeredSlides: true,
@@ -62,7 +62,7 @@ const getReting = () => {
     return val;
 };
 
-var confirmOK = -1;
+/*var confirmOK = -1;
 document.getElementById('review-send').addEventListener('click', () => {
     var rating = getReting();
     if (document.getElementById('review-secret').value === '')
@@ -82,7 +82,7 @@ document.getElementById('review-send').addEventListener('click', () => {
         reviewDialog.show();
         confirmOK = setTimeout(() => { document.getElementById('review-confirm-ok').disabled = false; }, 3000);
     }
-});
+});*/
 
 if (location.search.indexOf('article')) {
     var rect = document.getElementById('small-blog-header').getBoundingClientRect();
@@ -107,7 +107,7 @@ db.collection('articles').get().then((snapshot) => {
         slide.id = 'slide--' + doc.id;
         slide.className = 'swiper-slide';
         slide.innerHTML = 
-        '<div class="mdc-card mdc-ripple-upgraded">'+
+        '<div class="mdc-card">'+
             (data.video ?
                 '<div class="mdc-card__media mdc-card__media--square"><video autoplay loop>読み込み中...</video></div>':
                 '<div class="mdc-card__media mdc-card__media--square">読み込み中...</div>')+
@@ -129,7 +129,7 @@ db.collection('articles').get().then((snapshot) => {
                 slide.getElementsByClassName('mdc-card__media')[0].textContent = '';
                 slide.getElementsByClassName('mdc-card__media')[0].style.backgroundImage = 'url(' + url + ')';
             });
-        new MDCRipple(slide.getElementsByClassName('mdc-card')[0]);
+        //new MDCRipple(slide.getElementsByClassName('mdc-card')[0]);
         smallBlog.insertBefore(slide, smallBlog.firstChild)
     });
     var swiper = new Swiper('#small-blog', {

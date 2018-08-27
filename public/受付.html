@@ -6,22 +6,22 @@
     <title>俺の肉巻き 受付用</title>
     <link rel="stylesheet" href="bundle.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
-    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/favicon.ico">
-    <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/icon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/icon-96x96.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="256x256" href="/icon-256x256.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512x512.png">
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="favicon.ico">
+    <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="icon-96x96.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="icon-256x256.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
   </head>
   <body>
     <div class="column">
-      <h2 class="mdc-typography--headline3">新規オーダー</h2>
+      <h2 class="mdc-typography--headline4">新規オーダー</h2>
       <h3 id="longest-wait" class="mdc-typography--headline5">最長待ち時間: XX分</h3>
-      <h3 id="nonfinished-count" class="mdc-typography--headline5">未処理数: XX個</h3>
+      <h3 id="nonfinished-count" class="mdc-typography--headline5">未完成数: XX個</h3>
       <div>
         <div class="order-input-container mdc-text-field mdc-text-field--outlined">
           <input id="order-num" type="number" id="order-num-outlined" class="mdc-text-field__input" value="100" min="0">
@@ -38,8 +38,8 @@
       </div>
       <div>
         <div class="order-input-container mdc-text-field mdc-text-field--outlined">
-          <input id="order-yakiniku-count" type="number" id="order-yakiniku-count-outlined" class="mdc-text-field__input" value="0" min="0">
-          <label for="order-yakiniku-count-outlined" class="mdc-floating-label">個数(焼き肉のたれ)</label>
+          <input id="order-taretare-count" type="number" id="order-taretare-count-outlined" class="mdc-text-field__input" value="0" min="0">
+          <label for="order-taretare-count-outlined" class="mdc-floating-label">焼き肉のたれ味セット</label>
           <div class="mdc-notched-outline">
             <svg>
               <path class="mdc-notched-outline__path" />
@@ -52,8 +52,8 @@
       </div>
       <div>
         <div class="order-input-container mdc-text-field mdc-text-field--outlined">
-          <input id="order-shio-count" type="number" id="order-shio-count-outlined" class="mdc-text-field__input" value="0" min="0">
-          <label for="order-shio-count-outlined" class="mdc-floating-label">個数(しおだれ)</label>
+          <input id="order-shioshio-count" type="number" id="order-shioshio-count-outlined" class="mdc-text-field__input" value="0" min="0">
+          <label for="order-shioshio-count-outlined" class="mdc-floating-label">しお味セット</label>
           <div class="mdc-notched-outline">
             <svg>
               <path class="mdc-notched-outline__path" />
@@ -65,6 +65,7 @@
         <button class="mdc-button mdc-button--unelevated button-down">－</button>
       </div>
       <button id="order-send" class="mdc-button mdc-button--raised">オーダー</button>
+      <button id="printing-retry" class="mdc-button mdc-button--raised" disabled>レシートの再印刷</button>
       <aside id="order-confirm" class="mdc-dialog" role="alertdialog" aria-labelledby="order-confirm-label" aria-describedby="order-confirm-description">
         <div class="mdc-dialog__surface">
           <header class="mdc-dialog__header">
@@ -75,7 +76,7 @@
           <section id="order-confirm-description" class="mdc-dialog__body"></section>
           <footer class="mdc-dialog__footer">
             <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--cancel">キャンセル</button>
-            <button id="order-confirm-ok" type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept" disabled>OK</button>
+            <button id="order-confirm-ok" type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept" disabled>オーダー確定</button>
           </footer>
         </div>
         <div class="mdc-dialog__backdrop"></div>
@@ -125,6 +126,9 @@
           </table>
         </div>
       </div>
+    </div>
+    <div style="width: 0; height: 0; overflow: hidden;">
+        <iframe id="hidden-frame" name="hidden-frame"> </iframe>
     </div>
     <script src="js/recept.bundle.js" async></script>
   </body>

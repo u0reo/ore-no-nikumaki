@@ -6,26 +6,30 @@
     <title>俺の肉巻き</title>
     <link rel="stylesheet" href="bundle.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
-    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/favicon.ico">
-    <link rel="icon" type="image/vnd.microsoft.icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/icon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/icon-32x32.png">
-    <link rel="icon" type="image/png" sizes="96x96" href="/icon-96x96.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png">
-    <link rel="icon" type="image/png" sizes="256x256" href="/icon-256x256.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512x512.png">
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="favicon.ico">
+    <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="icon-96x96.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="icon-256x256.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
   </head>
   <body>
-    <h1 class="mdc-typography--headline2" style="text-align: center;">俺の肉巻き</h1>
+    <div id="title" style="margin: 5mm 0;">
+      <div id="title-icon">
+        <img src="nikumaki-icon.svg" style="height: 100%; width: 100%;"/>
+      </div>
+      <div id="title-text" class="mdc-typography--headline3">俺の肉巻き</div>
+    </div>
     <h3 class="mdc-typography--headline6">!当日は順番待ち状況を掲載します</h3>
     <div id="waiting-container" style="display: none;"><!--mdc-shape-container-->
       <h3 class="waiting-title mdc-typography--headline5">順番待ち状況</h3>
       <!--<div class="mdc-shape-container__corner mdc-shape-container__corner-!!!!!-top-left"></div>-->
     </div>
 
-    <h3 class="mdc-typography--headline5">ギャラリー</h3>
     <div class="overlay-container">
     <div id="gallery" class="swiper-container">
       <div class="swiper-wrapper">
@@ -51,7 +55,7 @@
     </div>
     </div>
     <div class="mdc-typography--body2" style="text-align: right; margin-right: 5px; color: gray;">左にスワイプして過去記事へ</div>
-
+    <!--
     <h3 class="mdc-typography--headline5">レビュー投稿</h3>
     <div id="review-container">
       <div id="review-secret-container" class="mdc-text-field text-field mdc-text-field--upgraded">
@@ -94,6 +98,7 @@
       </div>
       <div class="mdc-dialog__backdrop"></div>
     </aside>
+    -->
     <script src="js/swiper.min.js"></script>
     <script src="js/index.bundle.js" async></script>
   </body>

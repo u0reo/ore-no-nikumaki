@@ -14,7 +14,23 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */e.a=class{static get cssClasses(){return{}}static get strings(){return{}}static get numbers(){return{}}static get defaultAdapter(){return{}}constructor(t={}){this.adapter_=t}init(){}destroy(){}}},function(t,e,n){"use strict";
+ */e.a=class{static get cssClasses(){return{}}static get strings(){return{}}static get numbers(){return{}}static get defaultAdapter(){return{}}constructor(t={}){this.adapter_=t}init(){}destroy(){}}},function(t,e,n){"use strict";var r=n(0);
+/**
+ * @license
+ * Copyright 2016 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */class i{static attachTo(t){return new i(t,new r.a)}constructor(t,e,...n){this.root_=t,this.initialize(...n),this.foundation_=void 0===e?this.getDefaultFoundation():e,this.foundation_.init(),this.initialSyncWithDOM()}initialize(){}getDefaultFoundation(){throw new Error("Subclasses must override getDefaultFoundation to return a properly configured foundation class")}initialSyncWithDOM(){}destroy(){this.foundation_.destroy()}listen(t,e){this.root_.addEventListener(t,e)}unlisten(t,e){this.root_.removeEventListener(t,e)}emit(t,e,n=!1){let r;"function"==typeof CustomEvent?r=new CustomEvent(t,{detail:e,bubbles:n}):(r=document.createEvent("CustomEvent")).initCustomEvent(t,n,!1,e),this.root_.dispatchEvent(r)}}e.a=i},function(t,e,n){"use strict";
 /**
  * @license
  * Copyright 2016 Google Inc. All Rights Reserved.
@@ -31,23 +47,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-let r,i;function o(t,e=!1){let n=r;if("boolean"==typeof r&&!e)return n;if(!(t.CSS&&"function"==typeof t.CSS.supports))return;const i=t.CSS.supports("--css-vars","yes"),o=t.CSS.supports("(--css-vars: yes)")&&t.CSS.supports("color","#00000000");return n=!(!i&&!o)&&!function(t){const e=t.document,n=e.createElement("div");n.className="mdc-ripple-surface--test-edge-var-bug",e.body.appendChild(n);const r=t.getComputedStyle(n),i=null!==r&&"solid"===r.borderTopStyle;return n.remove(),i}(t),e||(r=n),n}function a(t=window,e=!1){if(void 0===i||e){let e=!1;try{t.document.addEventListener("test",null,{get passive(){e=!0}})}catch(t){}i=e}return!!i&&{passive:!0}}function s(t){return["webkitMatchesSelector","msMatchesSelector","matches"].filter(e=>e in t).pop()}function u(t,e,n){const{x:r,y:i}=e,o=r+n.left,a=i+n.top;let s,u;return"touchstart"===t.type?(s=t.changedTouches[0].pageX-o,u=t.changedTouches[0].pageY-a):(s=t.pageX-o,u=t.pageY-a),{x:s,y:u}}n.d(e,"d",function(){return o}),n.d(e,"a",function(){return a}),n.d(e,"b",function(){return s}),n.d(e,"c",function(){return u})},function(t,e,n){"use strict";var r=n(0);
-/**
- * @license
- * Copyright 2016 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */class i{static attachTo(t){return new i(t,new r.a)}constructor(t,e,...n){this.root_=t,this.initialize(...n),this.foundation_=void 0===e?this.getDefaultFoundation():e,this.foundation_.init(),this.initialSyncWithDOM()}initialize(){}getDefaultFoundation(){throw new Error("Subclasses must override getDefaultFoundation to return a properly configured foundation class")}initialSyncWithDOM(){}destroy(){this.foundation_.destroy()}listen(t,e){this.root_.addEventListener(t,e)}unlisten(t,e){this.root_.removeEventListener(t,e)}emit(t,e,n=!1){let r;"function"==typeof CustomEvent?r=new CustomEvent(t,{detail:e,bubbles:n}):(r=document.createEvent("CustomEvent")).initCustomEvent(t,n,!1,e),this.root_.dispatchEvent(r)}}e.a=i},function(t,e,n){"use strict";var r=n(2);
+let r,i;function o(t,e=!1){let n=r;if("boolean"==typeof r&&!e)return n;if(!(t.CSS&&"function"==typeof t.CSS.supports))return;const i=t.CSS.supports("--css-vars","yes"),o=t.CSS.supports("(--css-vars: yes)")&&t.CSS.supports("color","#00000000");return n=!(!i&&!o)&&!function(t){const e=t.document,n=e.createElement("div");n.className="mdc-ripple-surface--test-edge-var-bug",e.body.appendChild(n);const r=t.getComputedStyle(n),i=null!==r&&"solid"===r.borderTopStyle;return n.remove(),i}(t),e||(r=n),n}function a(t=window,e=!1){if(void 0===i||e){let e=!1;try{t.document.addEventListener("test",null,{get passive(){e=!0}})}catch(t){}i=e}return!!i&&{passive:!0}}function s(t){return["webkitMatchesSelector","msMatchesSelector","matches"].filter(e=>e in t).pop()}function u(t,e,n){const{x:r,y:i}=e,o=r+n.left,a=i+n.top;let s,u;return"touchstart"===t.type?(s=t.changedTouches[0].pageX-o,u=t.changedTouches[0].pageY-a):(s=t.pageX-o,u=t.pageY-a),{x:s,y:u}}n.d(e,"d",function(){return o}),n.d(e,"a",function(){return a}),n.d(e,"b",function(){return s}),n.d(e,"c",function(){return u})},function(t,e,n){"use strict";var r=n(1);
 /**
  * @license
  * Copyright 2016 Google Inc. All Rights Reserved.
@@ -80,7 +80,7 @@ let r,i;function o(t,e=!1){let n=r;if("boolean"==typeof r&&!e)return n;if(!(t.CS
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-const o={ROOT:"mdc-ripple-upgraded",UNBOUNDED:"mdc-ripple-upgraded--unbounded",BG_FOCUSED:"mdc-ripple-upgraded--background-focused",FG_ACTIVATION:"mdc-ripple-upgraded--foreground-activation",FG_DEACTIVATION:"mdc-ripple-upgraded--foreground-deactivation"},a={VAR_LEFT:"--mdc-ripple-left",VAR_TOP:"--mdc-ripple-top",VAR_FG_SIZE:"--mdc-ripple-fg-size",VAR_FG_SCALE:"--mdc-ripple-fg-scale",VAR_FG_TRANSLATE_START:"--mdc-ripple-fg-translate-start",VAR_FG_TRANSLATE_END:"--mdc-ripple-fg-translate-end"},s={PADDING:10,INITIAL_ORIGIN_SCALE:.6,DEACTIVATION_TIMEOUT_MS:225,FG_DEACTIVATION_MS:150,TAP_DELAY_MS:300};var u=n(1);
+const o={ROOT:"mdc-ripple-upgraded",UNBOUNDED:"mdc-ripple-upgraded--unbounded",BG_FOCUSED:"mdc-ripple-upgraded--background-focused",FG_ACTIVATION:"mdc-ripple-upgraded--foreground-activation",FG_DEACTIVATION:"mdc-ripple-upgraded--foreground-deactivation"},a={VAR_LEFT:"--mdc-ripple-left",VAR_TOP:"--mdc-ripple-top",VAR_FG_SIZE:"--mdc-ripple-fg-size",VAR_FG_SCALE:"--mdc-ripple-fg-scale",VAR_FG_TRANSLATE_START:"--mdc-ripple-fg-translate-start",VAR_FG_TRANSLATE_END:"--mdc-ripple-fg-translate-end"},s={PADDING:10,INITIAL_ORIGIN_SCALE:.6,DEACTIVATION_TIMEOUT_MS:225,FG_DEACTIVATION_MS:150,TAP_DELAY_MS:300};var u=n(2);
 /**
  * @license
  * Copyright 2016 Google Inc. All Rights Reserved.
