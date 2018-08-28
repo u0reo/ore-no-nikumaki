@@ -25,6 +25,10 @@ html, body {
   //color: white;
 }
 
+body {
+  margin: 0 10px !important;
+}
+
 /////タイトル/////
 #title-icon {
   display: inline-block;
@@ -39,15 +43,14 @@ html, body {
   display: inline-block;
   margin: 2px 5px 0;
   font-size: 12vw;
+  @media (min-width: 450px) { font-size: 54px; }
 }
-@media (min-width: 450px) { #title-text { font-size: 54px; } }
-////////////////////
 
 h2, h3, h4 {
   margin-left: 15px;
 }
 
-@media (min-aspect-ratio: 1/1) {
+@media (min-width: 1080px) {
   .column {
     height: 100%;
     width: calc((100% - 30px) / 2) !important;
@@ -85,8 +88,6 @@ h2, h3, h4 {
 }
 
 #waiting-container {
-  //@include mdc-shape-angled-corner(white, 12px);
-  //@include mdc-shape-angled-corner-outline(2px, #a98274);
   min-height: 150px;
   padding: 30px 10px 10px;
   border:  1px solid black;
@@ -128,6 +129,8 @@ h2, h3, h4 {
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%2027%2044'%3E%3Cpath%20d%3D'M27%2C22L27%2C22L5%2C44l-2.1-2.1L22.8%2C22L2.9%2C2.1L5%2C0L27%2C22L27%2C22z'%20fill%3D'%23d91c97'%2F%3E%3C%2Fsvg%3E");
   right: 0;
 }
+/////swiperのページビュレット
+.swiper-pagination-bullet-active { background: #d91c97; }
 
 /////ギャラリー
 #gallery {
@@ -153,30 +156,14 @@ h2, h3, h4 {
     width: 24px;
     background-size: 24px 40px;
   }
-  .swiper-pagination-bullet-active { background: #a98274; }
 }
 
-/*#article-card {
-  cursor: pointer;
-}*/
-
 /////ミニ日記
-#small-blog {//, #article-card {
+#small-blog {
   max-width: 600px;
   overflow: visible;
-  
   .swiper-slide { max-width: 600px; }
-  .mdc-typography--body1 {
-    height: 80vh;
-    margin: auto;
-  }
-  .mdc-card {
-    margin: 10px;
-    /*background-color: #3c3c3c;
-    box-shadow: 0px 3px 1px -2px rgba(255, 255, 255, 0.2),
-    0px 2px 2px 0px rgba(255, 255, 255, 0.14),
-    0px 1px 5px 0px rgba(255, 255, 255, 0.12)*/
-  }
+  .mdc-card { margin: 10px; }
   .mdc-card__media {
     max-height: 400px;
     overflow: hidden;
@@ -188,7 +175,6 @@ h2, h3, h4 {
   .card-primary *, .card-secondary * { margin: 0; }
   .card-primary { padding: 1rem; }
   .card-secondary { padding: 0 1rem 1rem; }
-  //.swiper-pagination-bullet, .swiper-pagination-bullet-active { background-color: white; }
   .swiper-button-prev, .swiper-button-next {
     display: none;
     top: 490px;
@@ -200,7 +186,7 @@ h2, h3, h4 {
 }
 
 /////中央寄せ
-#title, .mdc-typography--body1, .mdc-card__media {
+#title, .mdc-card__media {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -224,7 +210,7 @@ h2, h3, h4 {
       height: 50px;
       overflow: hidden;
       position: relative;
-      background: url('data:image/svg+xml;charset=utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22iso-8859-1%22%3F%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20version%3D%221.1%22%20id%3D%22Capa_1%22%20x%3D%220px%22%20y%3D%220px%22%20width%3D%22512px%22%20height%3D%22512px%22%20viewBox%3D%220%200%20306%20306%22%20style%3D%22enable-background%3Anew%200%200%20306%20306%3B%22%20xml%3Aspace%3D%22preserve%22%3E%3Cg%3E%20%3Cg%20id%3D%22star-rate%22%3E%20%3Cpolygon%20points%3D%22153%2C230.775%20247.35%2C299.625%20211.65%2C187.425%20306%2C121.125%20191.25%2C121.125%20153%2C6.375%20114.75%2C121.125%200%2C121.125%2094.35%2C187.425%2058.65%2C299.625%20%22%20fill%3D%22%23dddddd%22%2F%3E%20%3C%2Fg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+      background: url('data:image/svg+xml;charset=utf8,%3csvg%20xmlns%3d%27http%3a%2f%2fwww%2ew3%2eorg%2f2000%2fsvg%27%20viewBox%3d%270%200%20306%20306%27%3e%3cpolygon%20points%3d%27153%2c230%2e775%20247%2e35%2c299%2e625%20211%2e65%2c187%2e425%20306%2c121%2e125%20191%2e25%2c121%2e125%20153%2c6%2e375%20114%2e75%2c121%2e125%200%2c121%2e125%2094%2e35%2c187%2e425%2058%2e65%2c299%2e625%27%20fill%3d%27%23dddddd%27%2f%3e%3c%2fsvg%3e');
       background-size: contain;
       i {
         opacity: 0;
@@ -234,7 +220,7 @@ h2, h3, h4 {
         height: 100%;
         width: 20%;
         z-index: 1;
-        background: url('data:image/svg+xml;charset=utf8,%3C%3Fxml%20version%3D%221.0%22%20encoding%3D%22iso-8859-1%22%3F%3E%3C!DOCTYPE%20svg%20PUBLIC%20%22-%2F%2FW3C%2F%2FDTD%20SVG%201.1%2F%2FEN%22%20%22http%3A%2F%2Fwww.w3.org%2FGraphics%2FSVG%2F1.1%2FDTD%2Fsvg11.dtd%22%3E%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20version%3D%221.1%22%20id%3D%22Capa_1%22%20x%3D%220px%22%20y%3D%220px%22%20width%3D%22512px%22%20height%3D%22512px%22%20viewBox%3D%220%200%20306%20306%22%20style%3D%22enable-background%3Anew%200%200%20306%20306%3B%22%20xml%3Aspace%3D%22preserve%22%3E%3Cg%3E%20%3Cg%20id%3D%22star-rate%22%3E%20%3Cpolygon%20points%3D%22153%2C230.775%20247.35%2C299.625%20211.65%2C187.425%20306%2C121.125%20191.25%2C121.125%20153%2C6.375%20114.75%2C121.125%200%2C121.125%2094.35%2C187.425%2058.65%2C299.625%20%22%20fill%3D%22%23FFDA44%22%2F%3E%20%3C%2Fg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3Cg%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+        background: url('data:image/svg+xml;charset=utf8,%3csvg%20xmlns%3d%27http%3a%2f%2fwww%2ew3%2eorg%2f2000%2fsvg%27%20viewBox%3d%270%200%20306%20306%27%3e%3cpolygon%20points%3d%27153%2c230%2e775%20247%2e35%2c299%2e625%20211%2e65%2c187%2e425%20306%2c121%2e125%20191%2e25%2c121%2e125%20153%2c6%2e375%20114%2e75%2c121%2e125%200%2c121%2e125%2094%2e35%2c187%2e425%2058%2e65%2c299%2e625%27%20fill%3d%27%23FFDA44%27%2f%3e%3c%2fsvg%3e');
         background-size: contain;
       }
       input {
@@ -261,33 +247,58 @@ h2, h3, h4 {
 
 //受付.html
 /////オーダー画面
+@media (max-width: 450px) {
+  .mdc-typography--headline4 { font-size: 7.5vw; margin: 4vw 0 4vw 2vw; }
+  .mdc-typography--headline5 { font-size: 5.4vw; margin: 3.2vw 0 3.2vw 2vw; }
+}
+.mdc-typography--headline4 {
+  margin: 18px 0 18px 9px;
+}
+.mdc-typography--headline5 {
+  margin: 14.4px 0 14.4px 9px;
+}
+
 .order-input-container {
-  height: 100%;
-  width: calc(100% - 172px);
+  width: calc(100% - 14px - 36vw);
+  height: 18vw;
+  max-height: 84px;
   margin: 8px 0 !important;
   vertical-align: middle;
   input {
-    height: 50px;
-    margin: 10px;
+    height: 100%;
+    padding: 0 15px !important;
     text-align: right;
-    font-size: 4em;
+    font-size: 12vw;
   }
   input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }
   .mdc-floating-label {
-    font-size: 1.6rem;
-    bottom: 57px;
+    word-break: keep-all;
+    font-size: 6vw;
+    bottom: calc(16vw - 30px);
+  }
+  @media (min-width: 450px) {
+    width: calc(100% - 184px);
+    input { font-size: 54px; }
+    .mdc-floating-label { font-size: 27px; bottom: 42px; }
   }
 }
 
 .button-up, .button-down {
-  width: 80px;
-  height: 84px;
-  font-size: 3em;
+  width: 18vw;
+  height: 18vw;
+  min-width: unset;
+  max-width: 84px;
+  max-height: 84px;
+  line-height: 18vw;
+  font-size: 10vw;
   vertical-align: middle;
+  text-align: center;
+  @media (min-width: 450px) { line-height: 84px; font-size: 44px; }
 }
+
 .button-up { @include mdc-button-container-fill-color(#f44336) }
 .button-down { @include mdc-button-container-fill-color(#2196f3) }
 
@@ -295,21 +306,19 @@ h2, h3, h4 {
   height: 54px;
   width: 100%;
   margin-top: 12px;
-  font-size: 1.8em;
+  font-size: 7vw;
+  @media (min-width: 450px) { font-size: 32px; }
 }
-
-/*.mdc-dialog__surface {
-  box-shadow: 0px 11px 15px -7px rgba(255, 255, 255, 0.2),
-  0px 24px 38px 3px rgba(255, 255, 255, 0.14),
-  0px 9px 46px 8px rgba(255, 255, 255, 0.12);
-  background-color: black;
-}*/
 
 table {
   width: 100%;
   border-spacing: 0;
+  table-layout: fixed;
   th, td {
     text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
   th {
     color: rgba(0,0,0,.54);

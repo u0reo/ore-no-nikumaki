@@ -1,26 +1,12 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import * as app from './app';
 import 'firebase/storage';
 
-// Initialize Firebase
-var config = {
-    apiKey: "AIzaSyBAqxuluLCGZXFxPLFKR63fleZTEqGIqjo",
-    authDomain: "ore-no-nikumaki.firebaseapp.com",
-    databaseURL: "https://ore-no-nikumaki.firebaseio.com",
-    projectId: "ore-no-nikumaki",
-    storageBucket: "ore-no-nikumaki.appspot.com",
-    messagingSenderId: "1052018935491"
-};
-firebase.initializeApp(config);
-
+const storage = app.fire.storage().ref();
 import { MDCTextField } from '@material/textfield';
 import { MDCRipple } from '@material/ripple';
-import { MDCDialog } from '@material/dialog';
-//import Swiper from "swiper";
 Array.from(document.querySelectorAll('.mdc-text-field'), e => new MDCTextField(e));
 Array.from(document.querySelectorAll('.mdc-button'), e => new MDCRipple(e));
-//const reviewDialog = new MDCDialog(document.getElementById('review-confirm'));
-const gallery = new Swiper('#gallery', {
+new Swiper('#gallery', {
     loop: true,
     centeredSlides: true,
     autoplay: { delay: 6000, disableOnInteraction: false, },
@@ -28,39 +14,31 @@ const gallery = new Swiper('#gallery', {
     navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev', },
 });
 
-var storageRef = firebase.storage().ref(); 
-const db = firebase.firestore();
-db.settings({ timestampsInSnapshots: true });
-var orders = db.collection("orders");
-
-const refresh = (snapshot) => {
-    console.log("refresh");
+app.ordersQuery.onSnapshot((snapshot) => {
     snapshot.docChanges().forEach(function (change) {
-        if (change.type === "added") {
+        if (change.type === 'added') {
             var div = document.createElement('div');
             div.classList.add('waiting-ticket');
             div.textContent = change.doc.data().num;
             div.id = 'ticket-' + div.textContent;
             document.getElementById('waiting-container').appendChild(div);
         }
-        if (change.type === "modified") {
-            //console.log("Modified city: ", change.doc.data());
+        if (change.type === 'modified') {
+            //console.log('Modified city: ', change.doc.data());
         }
-        if (change.type === "removed") {
+        if (change.type === 'removed') {
             document.getElementById('ticket-' + change.doc.data().num).remove();
         }
     });
-}
-var ordersQuery = orders.where("cancel", "==", false).where("finish", "==", false).orderBy("date");
-ordersQuery.onSnapshot(refresh);
+});
 
-const getReting = () => {
+function getReting(){
     var val = 0;
     Array.from(document.getElementsByName('rating'), (e) => {
         if (e.checked) val = e.value;
     });
     return val;
-};
+}
 
 /*var confirmOK = -1;
 document.getElementById('review-send').addEventListener('click', () => {
@@ -84,7 +62,7 @@ document.getElementById('review-send').addEventListener('click', () => {
     }
 });*/
 
-if (location.search.indexOf('article')) {
+if (location.search.indexOf('article') >= 0) {
     var rect = document.getElementById('small-blog-header').getBoundingClientRect();
     window.scrollTo(rect.left, rect.top);
 }
@@ -98,7 +76,7 @@ if (datalist) {
 }
 
 
-db.collection('articles').get().then((snapshot) => {
+app.articles.get().then((snapshot) => {
     var smallBlog = document.querySelector('#small-blog .swiper-wrapper');
     smallBlog.children[0].remove();
     snapshot.forEach((doc) => {
@@ -121,11 +99,11 @@ db.collection('articles').get().then((snapshot) => {
         slide.getElementsByClassName('mdc-typography--subtitle2')[0].textContent = data.subtitle;
         slide.getElementsByClassName('mdc-typography--body2')[0].textContent = data.body;
         if (data.video)
-            storageRef.child(doc.id + '.mp4').getDownloadURL().then((url) => {
+            storage.child(doc.id + '.mp4').getDownloadURL().then((url) => {
                 slide.getElementsByClassName('mdc-card__media')[0].childNodes[0].src = url;
             });
         else
-            storageRef.child(doc.id + '.jpg').getDownloadURL().then((url) => {
+            storage.child(doc.id + '.jpg').getDownloadURL().then((url) => {
                 slide.getElementsByClassName('mdc-card__media')[0].textContent = '';
                 slide.getElementsByClassName('mdc-card__media')[0].style.backgroundImage = 'url(' + url + ')';
             });

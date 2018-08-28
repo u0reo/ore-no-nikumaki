@@ -1,18 +1,4 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-
-// Initialize Firebase
-var config = {
-    apiKey: 'AIzaSyBAqxuluLCGZXFxPLFKR63fleZTEqGIqjo',
-    authDomain: 'ore-no-nikumaki.firebaseapp.com',
-    databaseURL: 'https://ore-no-nikumaki.firebaseio.com',
-    projectId: 'ore-no-nikumaki',
-    storageBucket: 'ore-no-nikumaki.appspot.com',
-    messagingSenderId: '1052018935491'
-};
-firebase.initializeApp(config);
-const db = firebase.firestore();
-db.settings({ timestampsInSnapshots: true });
+import * as app from './app';
 
 var dateOrders = {};
 
@@ -21,26 +7,12 @@ setInterval(() => {
     Object.keys(dateOrders).forEach((key) => {
         let row = document.getElementById('order-' + key)
         let sec = (new Date().getTime() - dateOrders[key].getTime()) / 1000;
-        row.style.backgroundColor = 'rgba(' + (row.classList.contains('call') ? '169,130,116,' : '217,108,179,') + (sec / targetTime) + ')';
+        row.style.backgroundColor = 'rgba(' + (row.classList.contains('call') ? '169,130,116,' : '217,108,179,') + (sec / app.targetTime) + ')';
         document.getElementById('time-order-' + key).textContent = Math.floor(sec / 60) + ':' + ('00' + Math.floor(sec % 60)).slice(-2);
     });
 }, 1000);
 
-var targetTime = 600;
-var estimateTime = 600;
-var itemCount = 0;
-var riceCount = 0;
-
-db.collection('orders').doc('general').onSnapshot((snapshot) => {
-    let d = snapshot.data();
-    targetTime = d.targetTime;
-    estimateTime = d.estimateTime;
-    itemCount = d.itemCount;
-    riceCount = d.riceCount;
-});
-
-var ordersQuery = db.collection('orders').where('cancel', '==', false).where('hand', '==', false).orderBy('datetime');
-ordersQuery.onSnapshot((snapshot) =>
+app.ordersQuery.onSnapshot((snapshot) =>
     snapshot.docChanges().forEach((data) => {
         if (data.type === 'added')
             addOrder(data.doc);
@@ -92,18 +64,24 @@ function addOrder(doc) {
     cell5.id = 'time-order-' + d.num;
     cell6.innerHTML = '<button class="mdc-button order-next">' + (d.call ? '受け渡し' : 'コール') + '</button>';
     cell6.children[0].addEventListener('click', (e) => {
-        if (getParent(e.target).classList.contains('call'))
-            db.collection('orders').doc(getNum(e.target)).update({ hand: true });
+        if (getParent(e.target).classList.contains('call')) {
+            updateData(e.target, { hand: true });
+            orders.doc('general').update({  });
+        }
         else
-            db.collection('orders').doc(getNum(e.target)).update({ call: true, calledDatetime: firebase.firestore.Timestamp.now() });
+            updateData(e.target, { call: true, calledDatetime: app.getFirebaseDateTime() });
     });
     cell7.innerHTML = '<button class="mdc-button order-cancel">' + (d.call ? 'コール取り消し' : 'キャンセル') + '</button>';
     cell7.children[0].addEventListener('click', (e) => {
         if (getParent(e.target).classList.contains('call'))
-            db.collection('orders').doc(getNum(e.target)).update({ call: false });
+            updateData(e.target, { call: false });
         else
-            db.collection('orders').doc(getNum(e.target)).update({ cancel: true });
+            updateData(e.target, { cancel: true });
     });
+}
+
+function updateData(element, data){
+    app.orders.doc(getNum(element)).update(data);
 }
 
 function getParent(element){

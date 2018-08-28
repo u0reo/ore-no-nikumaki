@@ -1,16 +1,4 @@
-import firebase from 'firebase/app';
-import 'firebase/firestore';
-
-// Initialize Firebase
-var config = {
-    apiKey: 'AIzaSyBAqxuluLCGZXFxPLFKR63fleZTEqGIqjo',
-    authDomain: 'ore-no-nikumaki.firebaseapp.com',
-    databaseURL: 'https://ore-no-nikumaki.firebaseio.com',
-    projectId: 'ore-no-nikumaki',
-    storageBucket: 'ore-no-nikumaki.appspot.com',
-    messagingSenderId: '1052018935491'
-};
-firebase.initializeApp(config);
+import * as app from './app';
 
 import { MDCTextField } from '@material/textfield';
 import { MDCRipple } from '@material/ripple';
@@ -57,7 +45,7 @@ document.getElementById('order-send').addEventListener('click', () => {
 });
 orderDialog.listen('MDCDialog:accept', () => {
     let num = document.getElementById('order-num');
-    addTicketDB(num.value, document.getElementById('order-taretare-count').value, document.getElementById('order-shioshio-count').value);
+    addTicketDB(num.value, document.getElementById('order-taretare-count').value, document.getElementById('order-shioshio-count').value, document.getElementById('order-tareshio-count').value);
     printReceipt(lastOrderData);
     document.getElementById('printing-retry').disabled = false;
     document.getElementById('printing-retry').textContent = 'レシート(' + lastOrderData.num + ')の再印刷'
@@ -80,73 +68,44 @@ function printReceipt(data){
     document.getElementById('hidden-frame').contentDocument.location.replace(url);
 }
 
-const db = firebase.firestore();
-db.settings({ timestampsInSnapshots: true });
-const orders = db.collection('orders');
-const general = orders.doc('general');
-
-var targetTime = 600;
-var estimateTime = 600;
-var itemCount = 0;
-var riceCount = 0;
-
-general.onSnapshot((snapshot) => {
-    let d = snapshot.data();
-    targetTime = d.targetTime;
-    estimateTime = d.estimateTime;
-    itemCount = d.itemCount;
-    riceCount = d.riceCount;
-});
-
-orders.orderBy('num', 'desc').limit(1).get().then((snapshot) => {
+app.orders.orderBy('num', 'desc').limit(1).get().then((snapshot) => {
     let num = (snapshot.empty ? 100 : (snapshot.docs[0].data().num + 1));
     document.getElementById('order-num').value = num;
 });
 
 function checkTicketDB(num, callback) {
-    orders.doc(num.toString()).get().then((doc) => {
-        if (!doc.exists)
-            callback(num);
-        else
-            alert(num + '番は既に使われています');
+    app.orders.doc(num.toString()).get().then((doc) => {
+        if (!doc.exists) callback(num);
+        else alert(num + '番は既に使われています');
     });
 }
 
-function addTicketDB(num, taretare, shioshio) {
+function addTicketDB(num, taretare, shioshio, tareshio) {
     lastOrderData = { num: parseInt(num), secret: createCode(),
-        taretare: parseInt(taretare), shioshio: parseInt(shioshio), tareshio: 0,/////////////////////////////
-        datetime: firebase.firestore.Timestamp.now(), call: false, hand: false, cancel: false };
-    orders.doc(num).set(lastOrderData);
-    general.update({ itemCount: itemCount + taretare + shioshio });
+        taretare: parseInt(taretare), shioshio: parseInt(shioshio), tareshio: parseInt(tareshio),
+        datetime: app.getFirebaseDateTime(), call: false, hand: false, cancel: false };
+    app.orders.doc(num).set(lastOrderData);
+    app.general.update({ itemCount: (app.itemCount + parseInt(taretare) + parseInt(shioshio) + parseInt(tareshio)) });
 }
 
 //ランダム文字列生成
 function createCode(){
-    var c = "abcdefghijklmnopqrstuvwxyz0123456789";
-    var r = "";
+    var c = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    var r = '';
     for (var i = 0; i < 8; i++) {
         r += c[Math.floor(Math.random() * c.length)];
     }
     return r;
 }
 
+app.generalRefresh(() => document.getElementById('nonfinished-count').textContent = '未完成数: ' + (app.itemCount - app.completeCount) +'個');
 const refresh = (snapshot) => {
-    let count = 0;
-    snapshot.forEach((doc) => {
-        count += parseInt(doc.data().taretare);
-        count += parseInt(doc.data().shioshio);
-    });
-    document.getElementById('nonfinished-count').textContent = '未完成数: ' + count + '個';
     document.getElementById('longest-wait').textContent = '最長待ち時間: ' + (snapshot.empty ? 'なし' :
             Math.ceil((new Date().getTime() - snapshot.docs[0].data().datetime.toDate().getTime()) / 60000) + '分');
     clearInterval(forceRefreshIndex);
     forceRefreshIndex = setInterval(forceRefresh, 60000);
 }
 
-var ordersQuery = orders.where('cancel', '==', false).where('hand', '==', false).orderBy('datetime');
-ordersQuery.onSnapshot(refresh);
-
+app.ordersQuery.limit(1).onSnapshot(refresh);
 var forceRefreshIndex;
-const forceRefresh = () => {
-    ordersQuery.get().then(refresh);
-}
+const forceRefresh = () => app.ordersQuery.limit(1).get().then(refresh);
