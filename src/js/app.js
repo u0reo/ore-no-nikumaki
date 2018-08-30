@@ -20,7 +20,7 @@ export const general = orders.doc('general');
 export const ordersQuery = orders.where('cancel', '==', false).where('hand', '==', false).orderBy('datetime');
 export const articles = db.collection('articles');
 
-export function getFirebaseDateTime(){
+export function getFirebaseDateTime() {
     return firebase.firestore.Timestamp.now();
 }
 
@@ -41,4 +41,4 @@ general.onSnapshot((snapshot) => {
     if (generalFunc) generalFunc();
 });
 var generalFunc = null;
-export function generalRefresh(func){ generalFunc = func; }
+export function generalRefresh(func) { generalFunc = func; }

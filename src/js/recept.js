@@ -27,7 +27,7 @@ setInterval(() => { document.getElementById('time').innerHTML = new Date().toLoc
 var confirmOK = -1;
 var lastOrderData = null;
 document.getElementById('order-send').addEventListener('click', () => {
-    if (parseInt(document.getElementById('order-taretare-count').value) <= 0 && document.getElementById('order-shioshio-count').value <= 0)
+    if (parseInt(document.getElementById('order-taretare-count').value) <= 0 && document.getElementById('order-shioshio-count').value <= 0 && document.getElementById('order-tareshio-count').value <= 0)
         alert('個数が0です、1個以上にしてください。')
     else
         checkTicketDB(document.getElementById('order-num').value, (num) => {
@@ -36,8 +36,9 @@ document.getElementById('order-send').addEventListener('click', () => {
             document.getElementById('order-confirm-description').innerText = 
                 '受付番号: ' + num + '\n' +
                 '焼き肉のたれ味セット: ' + document.getElementById('order-taretare-count').value + '\n' +
-                '塩味: ' + document.getElementById('order-shioshio-count').value + '\n\n' +
-                '確定すると自動でレシートが印刷されます\n\n' +
+                '塩味セット: ' + document.getElementById('order-shioshio-count').value + '\n\n' +
+                'たれ味塩味コンビ: ' + document.getElementById('order-tareshio-count').value + '\n\n' +
+                '確定すると自動でレシートが印刷されます\n' +
                 '3秒経つと「オーダー確定」が押せるようになります';
             orderDialog.show();
             confirmOK = setTimeout(() => { document.getElementById('order-confirm-ok').disabled = false; }, 3000);
@@ -55,7 +56,7 @@ document.getElementById('printing-retry').addEventListener('click', () => {
     printReceipt(lastOrderData);
 });
 
-function printReceipt(data){
+function printReceipt(data) {
     var url = 'AutoPrint://?';
     Object.keys(data).forEach((key) => {
         if (key === 'datetime')
@@ -63,7 +64,7 @@ function printReceipt(data){
         else
             url += key + '=' + data[key] + '&';
     });
-    url += 'receptnum=' + '127301';////////////////////////////////
+    //url += 'receptnum=' + '127301';
     console.log(url);
     document.getElementById('hidden-frame').contentDocument.location.replace(url);
 }
@@ -81,7 +82,7 @@ function checkTicketDB(num, callback) {
 }
 
 function addTicketDB(num, taretare, shioshio, tareshio) {
-    lastOrderData = { num: parseInt(num), secret: createCode(),
+    lastOrderData = { num: parseInt(num), secretCode: createCode(),
         taretare: parseInt(taretare), shioshio: parseInt(shioshio), tareshio: parseInt(tareshio),
         datetime: app.getFirebaseDateTime(), call: false, hand: false, cancel: false };
     app.orders.doc(num).set(lastOrderData);
@@ -89,7 +90,7 @@ function addTicketDB(num, taretare, shioshio, tareshio) {
 }
 
 //ランダム文字列生成
-function createCode(){
+function createCode() {
     var c = 'abcdefghijklmnopqrstuvwxyz0123456789';
     var r = '';
     for (var i = 0; i < 8; i++) {

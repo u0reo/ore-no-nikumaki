@@ -97,7 +97,7 @@
     </div>
     <div>
       <p id="datetime">2018年9月15日(土) 9:54:37</p>
-      <p id="receptnum">受付:127301, 127302</p>
+      <!--<p id="receptnum">受付:127301, 127302</p>-->
     </div>
     <hr>
     <div id="orderlist" style="font-size: 9pt;">
@@ -143,8 +143,8 @@
       data[kv[0]]=kv[1];
     });
     document.getElementById('num').textContent = data['num'];
-    document.getElementById('secret').textContent = data['secret'];
-    document.getElementById('receptnum').textContent = '受付:' + data['receptnum'].replace(/-/g, ',');
+    document.getElementById('secretcode').textContent = data['secret'];
+    //document.getElementById('receptnum').textContent = '受付:' + data['receptnum'].replace(/-/g, ',');
     document.getElementById('datetime').textContent = convertUnix(data['datetime']);
     var orderCount = 0;
     document.getElementById('orderlist').innerHTML += order('焼き肉のたれ味セット', data['taretare']);

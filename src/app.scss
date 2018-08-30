@@ -185,6 +185,17 @@ h2, h3, h4 {
   }
 }
 
+#status {
+  position: fixed;
+  bottom: 0;
+  min-height: 140px;
+  width: calc(100% - 24px);
+  padding: 5px 12px;
+  background-color: white;
+  z-index: 5;
+  box-shadow: 0px 0px 5px 3px rgba(0, 0, 0, 0.2);
+}
+
 /////中央寄せ
 #title, .mdc-card__media {
   display: flex;
@@ -192,9 +203,10 @@ h2, h3, h4 {
   align-items: center;
 }
 
+#secretcode-container { margin-top: 0; }
+
 #review-container {
   margin: 0 10px;
-  #review-secret-container { margin-top: 0; }
   #review-body-container {
     display: flex;
     width: auto;
