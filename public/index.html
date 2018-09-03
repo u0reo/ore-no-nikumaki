@@ -25,10 +25,11 @@
       </div>
       <div id="title-text" class="mdc-typography--headline3">俺の肉巻き</div>
     </div>
-    <h3 class="mdc-typography--headline6">!当日は順番待ち状況を掲載します</h3>
-    <div id="waiting-container" style="display: none;"><!--mdc-shape-container-->
-      <h3 class="waiting-title mdc-typography--headline5">順番待ち状況</h3>
-      <!--<div class="mdc-shape-container__corner mdc-shape-container__corner-!!!!!-top-left"></div>-->
+    <noscript>
+      <h2>JavaScriptを無効にした環境では利用できません！</h2>
+    </noscript>
+    <div id="complete-container">
+      <h3 class="complete-title mdc-typography--headline5">完成した注文リスト</h3>
     </div>
 
     <div class="overlay-container">
@@ -57,17 +58,32 @@
     </div>
     <div class="mdc-typography--body2" style="text-align: right; margin-right: 5px; color: gray;">左にスワイプして過去記事へ</div>
     <div id="status">
-      <p class="mdc-typography--headline6" style="margin-bottom: 0px;">レシートの登録はこちら</p>
-      <div id="secretcode-container" class="mdc-text-field text-field mdc-text-field--upgraded">
-        <input type="text" id="secretcode" class="mdc-text-field__input">
-        <label class="mdc-floating-label" for="secretcode">シークレットコード</label>
-        <div class="mdc-line-ripple"></div>
+      <div id="status-secretcode-container">
+        <p class="mdc-typography--headline6" style="margin: 10px 0 3px;">レシートの登録はこちら</p>
+        <div id="secretcode-container" class="mdc-text-field text-field mdc-text-field--upgraded">
+          <input type="text" id="secretcode" class="mdc-text-field__input">
+          <label class="mdc-floating-label" for="secretcode">シークレットコード</label>
+          <div class="mdc-line-ripple"></div>
+        </div>
+        <button id="secretcode-register" class="mdc-button mdc-button--outlined mdc-ripple-upgraded">登録</button>
+        <p class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg"
+          id="pw-validation-msg">レシートのQRコードの下に太文字で記載されている半角英数字6文字</p>
       </div>
-      <button id="secretcode-register" class="mdc-button mdc-button--outlined mdc-ripple-upgraded">登録</button>
-      <p class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg"
-        id="pw-validation-msg">レシートのQRコードの下に太文字で記載されている半角英数字8文字</p>
+      <div id="status-ticket-container" style="display: none;">
+        <p class="mdc-typography--headline6" style="margin: 10px 0 3px;">現在の待ち状況</p>
+        <div id="status-ticket" class="order-ticket"></div>
+        <div id="status-right">
+          <div id="status-box">
+            <div id="status-text"></div>
+            <button id="status-button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded">地図</button>
+          </div>
+          <button id="order-delete" class="mdc-button mdc-ripple-upgraded">別のオーダー番号/レシートを登録する</button>
+        </div>
+      </div>
       <p id="alert-browser" style="color: red; font-size: 8pt; display: none; margin: 4px 0;">iPhoneや一部のブラウザでは通知を利用できません。</p>
     </div>
+
+    <!--
     <h3 class="mdc-typography--headline5">レビュー投稿</h3>
     <div id="review-container">
       <div id="review-rating">
@@ -103,6 +119,7 @@
       </div>
       <div class="mdc-dialog__backdrop"></div>
     </aside>
+    -->
     <div id="space" style="height: 170px;"></div>
     <script src="js/swiper.min.js"></script>
     <script src="js/index.bundle.js" async></script>

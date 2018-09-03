@@ -22,7 +22,7 @@ Array.from(document.querySelectorAll('.button-down'), e => {
     })
 });
 
-setInterval(() => { document.getElementById('time').innerHTML = new Date().toLocaleString(); }, 1000);
+setInterval(() => { document.getElementById('time-recept').innerHTML = new Date().toLocaleString(); }, 1000);
 
 var confirmOK = -1;
 var lastOrderData = null;
@@ -36,7 +36,7 @@ document.getElementById('order-send').addEventListener('click', () => {
             document.getElementById('order-confirm-description').innerText = 
                 '受付番号: ' + num + '\n' +
                 '焼き肉のたれ味セット: ' + document.getElementById('order-taretare-count').value + '\n' +
-                '塩味セット: ' + document.getElementById('order-shioshio-count').value + '\n\n' +
+                '塩味セット: ' + document.getElementById('order-shioshio-count').value + '\n' +
                 'たれ味塩味コンビ: ' + document.getElementById('order-tareshio-count').value + '\n\n' +
                 '確定すると自動でレシートが印刷されます\n' +
                 '3秒経つと「オーダー確定」が押せるようになります';
@@ -46,11 +46,15 @@ document.getElementById('order-send').addEventListener('click', () => {
 });
 orderDialog.listen('MDCDialog:accept', () => {
     let num = document.getElementById('order-num');
-    addTicketDB(num.value, document.getElementById('order-taretare-count').value, document.getElementById('order-shioshio-count').value, document.getElementById('order-tareshio-count').value);
-    printReceipt(lastOrderData);
-    document.getElementById('printing-retry').disabled = false;
-    document.getElementById('printing-retry').textContent = 'レシート(' + lastOrderData.num + ')の再印刷'
-    num.value = parseInt(num.value) + 1;
+    addTicketDB(num.value, document.getElementById('order-taretare-count').value,
+        document.getElementById('order-shioshio-count').value,
+        document.getElementById('order-tareshio-count').value,
+        () => {
+            printReceipt(lastOrderData);
+            document.getElementById('printing-retry').disabled = false;
+            document.getElementById('printing-retry').textContent = 'レシート(' + lastOrderData.num + ')の再印刷'
+            num.value = parseInt(num.value) + 1;
+        });
 });
 document.getElementById('printing-retry').addEventListener('click', () => {
     printReceipt(lastOrderData);
@@ -59,7 +63,7 @@ document.getElementById('printing-retry').addEventListener('click', () => {
 function printReceipt(data) {
     var url = 'AutoPrint://?';
     Object.keys(data).forEach((key) => {
-        if (key === 'datetime')
+        if (key === 'orderTime')
             url += key + '=' + data[key].seconds + '&';
         else
             url += key + '=' + data[key] + '&';
@@ -81,19 +85,26 @@ function checkTicketDB(num, callback) {
     });
 }
 
-function addTicketDB(num, taretare, shioshio, tareshio) {
-    lastOrderData = { num: parseInt(num), secretCode: createCode(),
-        taretare: parseInt(taretare), shioshio: parseInt(shioshio), tareshio: parseInt(tareshio),
-        datetime: app.getFirebaseDateTime(), call: false, hand: false, cancel: false };
-    app.orders.doc(num).set(lastOrderData);
-    app.general.update({ itemCount: (app.itemCount + parseInt(taretare) + parseInt(shioshio) + parseInt(tareshio)) });
+function addTicketDB(num, taretare, shioshio, tareshio, then) {
+    let code = createCode();
+    app.orders.where('secretCode', '==', code).get().then((snapshot) => {
+        if (snapshot.empty) {
+            lastOrderData = { num: parseInt(num), secretCode: createCode(),
+                taretare: parseInt(taretare), shioshio: parseInt(shioshio), tareshio: parseInt(tareshio), devices: [],
+                orderTime: app.getFirebaseDateTime(), ship: false, deliver: false, call: false, hand: false, cancel: false };
+            app.orders.doc(num).set(lastOrderData);
+            app.general.update({ itemCount: (app.itemCount + parseInt(taretare) + parseInt(shioshio) + parseInt(tareshio)) });
+            then();
+        }
+        else addTicketDB(num, taretare, shioshio, tareshio, then);
+    });
 }
 
 //ランダム文字列生成
 function createCode() {
-    var c = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    var c = 'abcdefghkmnprstuvwxyz2345678';
     var r = '';
-    for (var i = 0; i < 8; i++) {
+    for (var i = 0; i < 6; i++) {
         r += c[Math.floor(Math.random() * c.length)];
     }
     return r;
@@ -102,7 +113,7 @@ function createCode() {
 app.generalRefresh(() => document.getElementById('nonfinished-count').textContent = '未完成数: ' + (app.itemCount - app.completeCount) +'個');
 const refresh = (snapshot) => {
     document.getElementById('longest-wait').textContent = '最長待ち時間: ' + (snapshot.empty ? 'なし' :
-            Math.ceil((new Date().getTime() - snapshot.docs[0].data().datetime.toDate().getTime()) / 60000) + '分');
+            Math.ceil((new Date().getTime() - snapshot.docs[0].data().orderTime.toDate().getTime()) / 60000) + '分');
     clearInterval(forceRefreshIndex);
     forceRefreshIndex = setInterval(forceRefresh, 60000);
 }

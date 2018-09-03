@@ -3,7 +3,7 @@ import * as app from './app';
 var dateOrders = {};
 
 setInterval(() => {
-    document.getElementById('time-fixed').innerHTML = new Date().toLocaleString();
+    document.getElementById('time-orderlist').innerHTML = new Date().toLocaleString();
     Object.keys(dateOrders).forEach((key) => {
         let row = document.getElementById('order-' + key)
         let sec = (new Date().getTime() - dateOrders[key].getTime()) / 1000;
@@ -27,65 +27,61 @@ app.ordersQuery.onSnapshot((snapshot) =>
                 row.remove();
                 delete dateOrders[data.doc.id];
             }
-            if (d.call) {
-                dateOrders[data.doc.id] = data.doc.data().calledDatetime.toDate();
-                row.classList.add('call');
-                row.getElementsByClassName('order-next')[0].textContent = '受け渡し';
-                row.getElementsByClassName('order-cancel')[0].textContent = 'コール取り消し';
-            }
-            else {
-                dateOrders[data.doc.id] = data.doc.data().datetime.toDate();
-                row.classList.remove('call');
-                row.getElementsByClassName('order-next')[0].textContent = 'コール';
-                row.getElementsByClassName('order-cancel')[0].textContent = 'キャンセル';
-            }
+            if (d.call) dateOrders[data.doc.id] = d.callTime.toDate();
+            else dateOrders[data.doc.id] = d.orderTime.toDate();
+            row.classList = getClassList(d);
+            row.getElementsByClassName('order-next')[0].textContent = getActionText(d);
+            row.getElementsByClassName('order-cancel')[0].textContent = getCancelText(d);
         }
     })
 );
 
 function addOrder(doc) {
     let d = doc.data();
-    dateOrders[d.num] = (d.call ? d.calledDatetime.toDate() : d.datetime.toDate());
+    dateOrders[doc.id] = (d.call ? d.callTime.toDate() : d.orderTime.toDate());
     let row = document.getElementById('order-table').insertRow(-1);
-    row.id = 'order-' + d.num;
-    if (d.call) row.classList.add('call');
+    row.id = 'order-' + doc.id;
+    row.classList = getClassList(d);
     let cell1 = row.insertCell(-1);
     let cell2 = row.insertCell(-1);
     let cell3 = row.insertCell(-1);
-    let cell4 = row.insertCell(-1);
+    //let cell4 = row.insertCell(-1);
     let cell5 = row.insertCell(-1);
     let cell6 = row.insertCell(-1);
     let cell7 = row.insertCell(-1);
     let cell8 = row.insertCell(-1);
-    cell1.innerHTML = d.num;
+    cell1.innerHTML = doc.id;
     cell2.innerHTML = d.taretare;
     cell3.innerHTML = d.shioshio;
-    cell4.innerHTML = d.tareshio;
-    cell5.innerHTML = d.datetime.toDate().toLocaleString();
+    //cell4.innerHTML = d.tareshio;
+    cell5.innerHTML = d.orderTime.toDate().toLocaleString();
     cell6.innerHTML = '--:--';
-    cell6.id = 'time-order-' + d.num;
-    cell7.innerHTML = '<button class="mdc-button order-next">' + (d.call ? '受け渡し' : 'コール') + '</button>';
+    cell6.id = 'time-order-' + doc.id;
+    cell7.innerHTML = '<button class="mdc-button order-next">' + getActionText(d) + '</button>';
     cell7.children[0].addEventListener('click', (e) => {
-        if (getParent(e.target).classList.contains('call')) {
-            updateData(e.target, { hand: true });
-            //orders.doc('general').update({  });
-        }
-        else {
-            updateData(e.target, { call: true, calledDatetime: app.getFirebaseDateTime() });
+        if (contain(e, 'call')) updateData(e.target, { hand: true, handTime: app.getFirebaseDateTime() });
+        else if (contain(e, 'deliver')) {
+            updateData(e.target, { call: true, callTime: app.getFirebaseDateTime() });
             sendNotification(getNum(e.target));
         }
+        else if (contain(e, 'ship')) updateData(e.target, { deliver: true });
+        else updateData(e.target, { ship: true });
     });
-    cell8.innerHTML = '<button class="mdc-button order-cancel">' + (d.call ? 'コール取り消し' : 'キャンセル') + '</button>';
+    cell8.innerHTML = '<button class="mdc-button order-cancel">' + getCancelText(d) + '</button>';
     cell8.children[0].addEventListener('click', (e) => {
-        if (getParent(e.target).classList.contains('call'))
-            updateData(e.target, { call: false });
-        else
-            updateData(e.target, { cancel: true });
+        if (contain(e, 'call')) updateData(e.target, { call: false });
+        else if (contain(e, 'deliver')) updateData(e.target, { deliver: false });
+        else if (contain(e, 'ship')) updateData(e.target, { ship: false });
+        else updateData(e.target, { cancel: true });
     });
 }
 
 function updateData(element, data) {
     app.orders.doc(getNum(element)).update(data);
+}
+
+function contain(e, text) {
+    return getParent(e.target).classList.contains(text)
 }
 
 function getParent(element) {
@@ -97,7 +93,7 @@ function getNum(element) {
 }
 
 function sendNotification(num) {
-    app.orders.doc(num).get().then((snapshot) => Array.prototype.slice.call(snapshot.data().devices, 0).forEach((value) =>
+    app.orders.doc(num).get().then((snapshot) => snapshot.data().devices.forEach((value) =>
         fetch('https://fcm.googleapis.com/fcm/send', {
             method: 'POST',
             headers: new Headers({
@@ -116,4 +112,27 @@ function sendNotification(num) {
             .then(res => { })
             .catch(err => { })
     ));
+}
+
+function getClassList(data) {
+    let list = '';
+    if (data.ship) list += 'ship ';
+    if (data.deliver) list += 'deliver ';
+    if (data.call) list += 'call ';
+    if (data.hand) list += 'hand ';
+    return list.trim();
+}
+
+function getActionText(data) {
+    if (data.call) return '受取完了';
+    else if (data.deliver) return 'コール';
+    else if (data.ship) return '飛脚到着';
+    else return '飛脚出発';
+}
+
+function getCancelText(data) {
+    if (data.call) return '×コール';
+    else if (data.deliver) return '×到着';
+    else if (data.ship) return '×出発';
+    else return '×オーダー';
 }

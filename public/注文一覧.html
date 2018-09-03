@@ -3,8 +3,9 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>俺の肉巻き オーダー一覧</title>
+    <title>俺の肉巻き 注文一覧</title>
     <link rel="stylesheet" href="bundle.css">
+    <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
     <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="favicon.ico">
     <link rel="icon" type="image/vnd.microsoft.icon" href="favicon.ico">
@@ -17,17 +18,17 @@
     <link rel="icon" type="image/png" sizes="256x256" href="icon-256x256.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
   </head>
-  <body>
-    <h2 class="mdc-typography--headline4">オーダーリスト</h2>
+  <body style="margin: 0 !important;">
+    <h2 class="mdc-typography--headline4" style="float:left;">注文一覧</h2>
+    <h2 id="time-orderlist" class="mdc-typography--headline4" style="float:right;">初期化中...</h2>
     <div id="order-table-container">
       <table class="header-table">
-        <thead><tr><th>受付番号</th><th>焼き肉のたれ味</th><th>塩味</th><th>たれ味塩味コンビ</th><th>注文時刻</th><th>注文/コール経過時間</th><th>コール/受け渡し</th><th style="color:red;">キャンセル</th></tr></thead>
+        <thead><tr><th>受付番号</th><th>焼き肉のたれ味</th><th>塩味</th><!--<th>たれ味塩味コンビ</th>--><th>注文時刻</th><th>経過時間</th><th>アクション</th><th style="color:red;">キャンセル</th></tr></thead>
       </table>
       <div class="body-table">
         <table id="order-table"><tbody></tbody></table>
       </div>
     </div>
-    <h2 id="time-fixed" class="mdc-typography--headline4">初期化中...</h2>
     <script src="js/orderlist.bundle.js" async></script>
   </body>
 </html>

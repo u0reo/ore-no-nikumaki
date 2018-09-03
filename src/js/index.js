@@ -23,57 +23,86 @@ new Swiper('#gallery', {
 document.getElementById('status').addEventListener('resize', (s) =>
     document.getElementById('space').style.height = s.clientHeight + 30);
 
-app.ordersQuery.onSnapshot((snapshot) => {
-    snapshot.docChanges().forEach(function (change) {
-        if (change.type === 'added') {
-            var div = document.createElement('div');
-            div.classList.add('waiting-ticket');
-            div.textContent = change.doc.data().num;
-            div.id = 'ticket-' + div.textContent;
-            document.getElementById('waiting-container').appendChild(div);
-        }
-        if (change.type === 'modified') {
-            //console.log('Modified city: ', change.doc.data());
-        }
-        if (change.type === 'removed') {
-            document.getElementById('ticket-' + change.doc.data().num).remove();
-        }
-    });
-});
-
 document.getElementById('secretcode-register').addEventListener('click', () => submitSecretCode(document.getElementById('secretcode').value));
+document.getElementById('order-delete').addEventListener('click', () => {
+    if (confirm('このオーダーの登録を消しますか？\nオーダーはキャンセルされません。'))
+        deleteOrder();
+})
 
-function submitSecretCode(code) {
-    app.orders.where('secretCode', '==', code).get().then((snapshot) => {
-        if (snapshot.size <= 0)
-            alert('正しいシークレットコードを入力してください');
-        else {
-            var d = snapshot.docs[0].data();
-            if (d.cancel) {
-                alert('この注文はキャンセル済みです');
-                document.getElementById('secretcode').value = '';
-                return;
-            } else if (d.hand) {
-                if (!confirm('この注文は受け取り済みですが、登録しますか？\nレビューなどが行えるようになります。')) return;
-            } else if (d.call) {
-                alert('既に呼ばれています、すぐに受け取りに来てください。');
-            } else {
-                registerNotification(snapshot.docs[0]);
-            }
-            registerOrder(snapshot.docs[0]);
-        }
+var order = undefined;
+var notification = false;
+try {
+    order = localStorage.getItem('order');
+    notification = (localStorage.getItem('notification') === 'true');
+}
+catch (ex) { order = undefined; }
+if (order)
+    app.orders.doc(order).get().then((snapshot) => {
+        if (snapshot.exists && !snapshot.data().cancel) registerOrder(order);
+        else deleteOrder();
     });
+    
+function submitSecretCode(secretCode) {
+    if (order) {
+        var sc;
+        try {
+            sc = localStorage.getItem('secretCode');
+        } catch (ex) {}
+        if (sc !== secretCode) {
+            if (confirm('既に' + order + '番の注文が登録されています、この注文で上書きしますか？注文の再登録は可能です。')) {
+                deleteOrder();
+                submitSecretCode(code);
+            }
+        }
+    } 
+    else
+        app.orders.where('secretCode', '==', secretCode).get().then((snapshot) => {
+            if (snapshot.size <= 0)
+                alert('正しいシークレットコードを入力してください');
+            else {
+                var d = snapshot.docs[0].data();
+                if (d.cancel) {
+                    alert('この注文はキャンセル済みです');
+                    document.getElementById('secretcode').value = '';
+                    return;
+                }
+                else if (d.hand) {
+                    if (!confirm('この注文は受け取り済みですが、登録しますか？\nレビューなどが行えるようになります。')) return;
+                }
+                registerNotification(snapshot.docs[0].id);
+                registerOrder(snapshot.docs[0].id, secretCode);
+                refreshOrderStatus(d, true);
+            }
+        });
 }
 
-function registerOrder(doc) {
-    localStorage.setItem(['order'], [doc.id]);
+function registerOrder(id, secretCode) {
+    order = id
+    if (!'localStorage' in window)
+        alert('クッキー(cookie)が利用できない環境では正しくご利用できません。');
+    else
+        try {
+            localStorage.setItem('order', id);
+            if (secretCode) localStorage.setItem('secretCode', secretCode);
+        }
+        catch (ex) {
+            alert('SafariのプライベートブラウザなどのlocalStorageが無効の環境では正しくご利用できません。');
+        }
+    document.getElementById('status-secretcode-container').style.display = 'none';
+    document.getElementById('status-ticket-container').style.display = 'block';
+    document.getElementById('status-ticket').textContent = id;
 }
 
-function getOrder() {
-    return localStorage.getItem(['order']);
+function deleteOrder() {
+    order = undefined;
+    localStorage.removeItem('order');
+    localStorage.removeItem('secretCode');
+    localStorage.removeItem('notification');
+    document.getElementById('status-secretcode-container').style.display = 'block';
+    document.getElementById('status-ticket-container').style.display = 'none';
 }
 
-function registerNotification(doc) {
+function registerNotification(id) {
     /*if (navigator.serviceWorker) {
         navigator.serviceWorker.register('./firebase-messaging-sw.js').then(() => {
             return navigator.serviceWorker.ready;
@@ -85,27 +114,85 @@ function registerNotification(doc) {
         });
     }*/
     if (window.Notification && messaging) {
-        alert('次の画面で通知を許可すると、完成時に通知を受け取れます！');
+        var already = (Notification.permission === 'granted');
+        if (!already)
+            alert('次の画面で通知を許可すると、完成時に通知を受け取れます！');
         messaging.requestPermission().then(() => {
-            console.log('Notification permission granted.');
+            //console.log('Notification permission granted.');
             messaging.getToken().then((token) => {
-                console.log(token);
-                app.orders.doc(doc.id).update({ devices: app.fire.firestore.FieldValue.arrayUnion(token) });
+                //console.log(token);
+                if (already) alert('通知を設定しました');
+                app.orders.doc(id).update({ devices: app.fire.firestore.FieldValue.arrayUnion(token) });
+                try { localStorage.setItem('notification', 'true'); notification = true; }
+                catch (ex) { }
             })
-            .catch((error) => alert(error));
+            .catch((error) => alert('通知の登録に失敗しました…\n\n' + error));
             return;
         }).catch((error) => console.log('Unable to get permission to notify.', error));
     }
     else document.getElementById('alert-browser').style.display = 'block';
 }
 
-if (messaging) {
+if (messaging && order) {
     messaging.onTokenRefresh(() => messaging.getToken().then((token) =>
-        app.orders.doc(getOrder()).update({ devices: app.fire.firestore.FieldValue.arrayUnion(token) })));
+        app.orders.doc(order).update({ devices: app.fire.firestore.FieldValue.arrayUnion(token) })));
     messaging.onMessage((payload) => {
-        /////通知設定時のみ
+        //console.log(payload);
+        new Notification(payload.notification.title, {
+            body: payload.notification.body,
+            icon: payload.notification.icon,
+            click_action: payload.notification.click_action
+        });
     });
 }
+
+var refresh = (snapshot) => {
+    snapshot.docChanges().forEach(function (change) {
+        var d = change.doc.data();
+        if (change.type === 'added' || change.type === 'modified') {
+            if ((d.call) && !document.getElementById('ticket-' + change.doc.id)) {
+                var div = document.createElement('div');
+                div.classList.add('order-ticket');
+                div.textContent = change.doc.id;
+                div.id = 'ticket-' + change.doc.id;
+                document.getElementById('complete-container').appendChild(div);
+            }
+            else if ((!d.call || d.hand) && document.getElementById('ticket-' + change.doc.id))
+                document.getElementById('ticket-' + change.doc.id).remove();
+        }
+        if (change.type === 'removed' && document.getElementById('ticket-' + change.doc.id)) {
+            document.getElementById('ticket-' + change.doc.id).remove();
+        }
+
+        if (change.doc.id === order)
+            refreshOrderStatus(d);
+    });
+    clearInterval(forceRefreshIndex);
+    forceRefreshIndex = setInterval(forceRefresh, 60000);
+};
+
+function refreshOrderStatus(d, flag) {
+    if (!d.call) {
+        //呼ばれていない
+        document.getElementById('status-text').textContent = '予想待ち時間: ' + Math.floor((d.orderTime.toDate().getTime() + app.targetTime * 1000 - new Date().getTime()) / 60000) + '分';
+    }
+    else if (!d.hand) {
+        //受け取っていない
+        var text = document.getElementById('status-text').textContent;
+        if (text !== '完成しました' && flag === undefined/* && !notification*/) alert('完成しました\n今すぐ受け取りに来てください！');
+        document.getElementById('status-text').textContent = '完成しました';
+        document.getElementById('status-button').textContent = '地図';
+    }
+    else {
+        //受け取った
+        document.getElementById('status-text').textContent = 'ありがとうございました';
+        document.getElementById('status-button').textContent = 'レビュー';
+    }
+}
+
+app.ordersQuery.onSnapshot(refresh);
+var forceRefreshIndex;
+const forceRefresh = () => app.ordersQuery.get().then(refresh);
 
 function getReting() {
     var val = 0;
