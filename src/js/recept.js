@@ -27,18 +27,23 @@ setInterval(() => { document.getElementById('time-recept').innerHTML = new Date(
 var confirmOK = -1;
 var lastOrderData = null;
 document.getElementById('order-send').addEventListener('click', () => {
-    if (parseInt(document.getElementById('order-taretare-count').value) <= 0 && document.getElementById('order-shioshio-count').value <= 0 && document.getElementById('order-tareshio-count').value <= 0)
+    let taretare = parseInt(document.getElementById('order-taretare-count').value);
+    let shioshio = parseInt(document.getElementById('order-shioshio-count').value);
+    if (taretare + shioshio <= 0)
         alert('個数が0です、1個以上にしてください。')
     else
         checkTicketDB(document.getElementById('order-num').value, (num) => {
             if (confirmOK !== -1) clearTimeout(confirmOK);
             document.getElementById('order-confirm-ok').disabled = true;
-            document.getElementById('order-confirm-description').innerText = 
-                '受付番号: ' + num + '\n' +
-                '焼き肉のたれ味セット: ' + document.getElementById('order-taretare-count').value + '\n' +
-                '塩味セット: ' + document.getElementById('order-shioshio-count').value + '\n' +
-                'たれ味塩味コンビ: ' + document.getElementById('order-tareshio-count').value + '\n\n' +
-                '確定すると自動でレシートが印刷されます\n' +
+            document.getElementById('order-confirm-description').innerHTML = 
+                '受付番号: ' + num + '<br>' +
+                '焼き肉のたれ味: ' + taretare + '個<br>' +
+                '塩味: ' + shioshio + '個<br><br>' +
+                //'たれ味塩味コンビ: ' + tareshio-count + '<br><br>' +
+                (taretare + shioshio > 1 ?
+                    '<div style="color:red;">★複数この注文があります。<br>必ずまとめてしか受け取れないことを確認してください。<br>分けて受け取る場合は別々の注文にしてください。</div><br>': '') +
+                '確定すると自動でレシートが印刷されます<br>' +
+                '受け取る際に<b>レシートを見せる</b>かレシートを登録した<b>スマホを見せる</b>ことが必要なことを説明してください。<br>' +
                 '3秒経つと「オーダー確定」が押せるようになります';
             orderDialog.show();
             confirmOK = setTimeout(() => { document.getElementById('order-confirm-ok').disabled = false; }, 3000);
@@ -55,6 +60,9 @@ orderDialog.listen('MDCDialog:accept', () => {
             document.getElementById('printing-retry').textContent = 'レシート(' + lastOrderData.num + ')の再印刷'
             num.value = parseInt(num.value) + 1;
         });
+    document.getElementById('order-taretare-count').value = 0;
+    document.getElementById('order-shioshio-count').value = 0;
+    document.getElementById('order-tareshio-count').value = 0;
 });
 document.getElementById('printing-retry').addEventListener('click', () => {
     printReceipt(lastOrderData);
@@ -121,3 +129,29 @@ const refresh = (snapshot) => {
 app.ordersQuery.limit(1).onSnapshot(refresh);
 var forceRefreshIndex;
 const forceRefresh = () => app.ordersQuery.limit(1).get().then(refresh);
+
+app.reviewsQuery.onSnapshot((snapshot) =>
+    snapshot.docChanges().forEach((data) => {
+        if (data.type === 'added') addReview(data.doc);
+        else if (data.type === 'modified') {
+            document.getElementById('review-' + data.doc.id).remove();
+            if (!data.doc.data().block) addReview(data.doc)
+        }
+        else if (data.type === 'removed')
+            document.getElementById('review-' + data.doc.id).remove();
+    })
+);
+
+function addReview(doc) {
+    let d = doc.data();
+    let row = document.getElementById('review-table').insertRow(-1);
+    row.id = 'review-' + doc.id;
+    let cell1 = row.insertCell(-1);
+    let cell2 = row.insertCell(-1);
+    let cell3 = row.insertCell(-1);
+    for (let i = 0; i < d.rate; i++) cell1.innerHTML += '★';
+    for (let i = d.rate; i < 5; i++) cell1.innerHTML += '☆';
+    cell2.innerHTML = d.body;
+    cell3.innerHTML = '<button class="mdc-button">ブロック</button>';
+    cell3.children[0].addEventListener('click', (e) => app.reviews.doc(doc.id).update({ block: true }));
+}

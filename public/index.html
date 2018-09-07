@@ -29,7 +29,7 @@
       <h2>JavaScriptを無効にした環境では利用できません！</h2>
     </noscript>
     <div id="complete-container">
-      <h3 class="complete-title mdc-typography--headline5">完成した注文リスト</h3>
+      <h3 class="complete-title mdc-typography--headline5">呼び出し済みの番号</h3>
     </div>
 
     <div class="overlay-container">
@@ -82,44 +82,38 @@
       </div>
       <p id="alert-browser" style="color: red; font-size: 8pt; display: none; margin: 4px 0;">iPhoneや一部のブラウザでは通知を利用できません。</p>
     </div>
+    <button id="review-start" class="mdc-button mdc-button--raised">レビュー投稿</button>
 
-    <!--
-    <h3 class="mdc-typography--headline5">レビュー投稿</h3>
-    <div id="review-container">
-      <div id="review-rating">
-        <span id="review-rating-span">
-          <input type="radio" name="rating" value="1"><i></i>
-          <input type="radio" name="rating" value="2"><i></i>
-          <input type="radio" name="rating" value="3"><i></i>
-          <input type="radio" name="rating" value="4"><i></i>
-          <input type="radio" name="rating" value="5"><i></i>
-        </span>
-      </div>
-      <div id="review-body-container" class="mdc-text-field mdc-text-field--textarea">
-        <textarea id="review-body" class="mdc-text-field__input" rows="8" cols="40"></textarea>
-        <label class="mdc-floating-label" for="review-body">レビュー本文(省略可)</label>
-      </div>
-      <p class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg">運営がすべて一度目を通してから公開されます</p>
-      <button id="review-send" class="mdc-button mdc-button--raised">送信</button>
-    </div>
-    <aside id="review-confirm" class="mdc-dialog" role="alertdialog" aria-labelledby="review-confirm-label" aria-describedby="review-confirm-description">
+    <aside id="review-post" class="mdc-dialog" role="alertdialog" aria-labelledby="review-post-label" aria-describedby="review-post-description">
       <div class="mdc-dialog__surface">
         <header class="mdc-dialog__header">
-          <h2 id="review-confirm-label" class="mdc-dialog__header__title">
-            レビューを送信しますか？
-          </h2>
+          <h2 id="review-post-label" class="mdc-dialog__header__title">レビュー</h2>
         </header>
-        <section id="review-confirm-description" class="mdc-dialog__body">
-          
+        <section id="review-post-description" class="mdc-dialog__body">
+          <div id="review-container">
+            <div id="review-rating">
+              <span id="review-rating-span">
+                <input type="radio" name="rating" value="1"><i></i>
+                <input type="radio" name="rating" value="2"><i></i>
+                <input type="radio" name="rating" value="3"><i></i>
+                <input type="radio" name="rating" value="4"><i></i>
+                <input type="radio" name="rating" value="5"><i></i>
+              </span>
+            </div>
+            <div id="review-body-container" class="mdc-text-field mdc-text-field--textarea">
+              <textarea id="review-body" class="mdc-text-field__input" rows="8" cols="40"></textarea>
+              <label class="mdc-floating-label" for="review-body">レビュー本文(省略可)</label>
+            </div>
+            <p class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg">運営がすべて一度目を通してから公開されます</p>
+          </div>
         </section>
         <footer class="mdc-dialog__footer">
           <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--cancel">キャンセル</button>
-          <button id="review-confirm-ok" type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--accept">OK</button>
+          <button id="review-send" type="button" class="mdc-button mdc-dialog__footer__button">OK</button>
         </footer>
       </div>
       <div class="mdc-dialog__backdrop"></div>
     </aside>
-    -->
     <div id="space" style="height: 170px;"></div>
     <script src="js/swiper.min.js"></script>
     <script src="js/index.bundle.js" async></script>

@@ -24,7 +24,7 @@
         }
 
         body {
-          margin: 0 3mm;
+          margin: 0 5mm;
         }
 
         p {
@@ -47,11 +47,16 @@
           height: 0.3mm;
         }
 
+        img {
+          height: 32mm;
+          width: 32mm;
+        }
+
         #title-icon {
           display: inline-block;
           width: 10mm;
           height: 10mm;
-          margin: 0 1mm;
+          margin: 0 0.5mm;
           /*background-color: black;
           mask: url('nikumaki-icon.svg') no-repeat 100% 100%;
           -webkit-mask: url('nikumaki-icon.svg') no-repeat 100% 100%;
@@ -61,7 +66,7 @@
 
         #title-text {
           display: inline-block;
-          margin: 1mm 1mm 0;
+          margin: 0 0 1mm 1mm;
           font-size: 6mm;
           font-family: '游明朝';
           font-weight: 600;
@@ -95,9 +100,13 @@
       </div>
       <div id="title-text">俺の肉巻き</div>
     </div>
+    <div class="c" style="border: dotted 0.5px black; padding: 0 1mm 1mm; margin: 5mm 0 0;">
+      <p style="position: relative; top: -2mm; background-color: white !important; display: inline-block;">☆クラスからのひとこと☆</p>
+      <p id="message" style="font-size: 7pt; margin-top: -2.5mm;">真ん中のあたりを箸で持って見るとおいしく見えます！ぜひお試しあれ</p>
+    </div>
     <div class="right" style="font-size: 6pt;">
       <p>筑波大学附属高校 127-3</p>
-      <p>第61回 桐陰祭 食販団体</p>
+      <p>第62回 桐陰祭 食販団体</p>
       <p>https://俺たちの肉巻き.tk</p>
     </div>
     <div>
@@ -131,13 +140,14 @@
     <div class="c" style="font-size: 7pt;">
       <p>上のQRコードを読み込むか、</p>
       <p style="text-decoration: underline;">https://俺の肉巻き.tk</p>
-      <p>シークレットコード: <b id="secretcode" style="font-size: 8pt;"></b></p>
-      <p>を入力することでスマホを引換券代わりに！
+      <p>シークレットコード: <b id="secretcode" style="font-size: 9pt;"></b></p>
+      <p>を入力することで<b>スマホを引換券</b>代わりに！
         また、順番確認や出来立て通知も。(※対応機種のみ)</p>
     </div>
-    <div class="c" style="border: dotted 0.5px black; padding: 0 1mm 1mm; margin: 5mm 0 0;">
-      <p style="position: relative; top: -2mm; background-color: white !important; display: inline-block;">☆クラスからのメッセージ☆</p>
-      <p id="message" style="font-size: 7pt; margin-top: -2.5mm;">真ん中のあたりを箸で持って見るとおいしく見えます！ぜひお試しあれ</p>
+    <div class="c" style="font-size:9.5pt; margin-top: 8mm;">
+      <p>ありがとうございました。</p>
+      <p>ぜひとも<b>投票よろしく<br>お願いします！！</b></p>
+      <p>団体番号は「<b>45</b>」です。</p>
     </div>
   </body>
   <script type="text/javascript" src="js/qrcode.min.js"></script>
@@ -158,12 +168,25 @@
     var t = '\\' + 150 * orderCount;
     document.getElementById('total').textContent = t;
     document.getElementById('totalK').textContent = t;
-    //document.getElementById('message').textContent = '';
+    var message = [
+      '3組は仲がいいのか多数決で均等に票が入り、なかなかまとまらない。(皆さんの投票は3組一択！',
+      '3組は今までの3年間、いろんな1番を取ったことがない無冠の帝王(投票お願いします泣',
+      '今年の桐陰祭委員長は我らが3組の高橋くん！皆さん存分に楽しんでください！',
+      '3組、実は一年生の桐陰祭で合唱1位取ったんです。(それ以来何もない)(だから今年こそグランプリを！)',
+      '3組の責任者の髪色が毎週のごとく変化している。(今は赤いです)(皆さんの心は変わらず3組に…?)',
+      '3組のレシートは幸運をもたらすと言われてい…ます……(多分)いっぱい買って集めましょう！',
+      '3組の屋台前面の装飾には、豚さんがたくさん！あれ？ぶ、豚さん…？！(まちがい探してみてね)',
+      'タレ派？塩派？どっちも食べてみなきゃそんなの分かりませんよ!!どっちも最高に美味しいので是非食べ比べを！',
+      '私たちのピンクの法被、カッコいいでしょ？あら、法被を見てたら、また肉巻きが食べたくなって…きた!!',
+      '今年は猛暑ですね…暑い時に食べるものといえば、そう！肉巻きおにぎり！(?)食べなきゃ桐陰祭は満喫できない！',
+      '校舎をリアル(っぽい)豚が歩いています！リアルな豚鼻、豚面と是非写真を撮ってください！',
+    ]
+    document.getElementById('message').textContent = message[Math.floor(Math.random() * (message.length))];
 
     var qr = new QRCode(document.getElementById('QRCode'), {
       text: 'https://xn--w8j5c142j0ylyx4b.tk/?s=' + data['secretCode'],
-      width: 200,
-      height: 200,
+      width: 100,
+      height: 100,
       correctLevel : QRCode.CorrectLevel.H
     });
 

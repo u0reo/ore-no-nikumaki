@@ -34,11 +34,46 @@ body {
   margin: 0 10px !important;
 }
 
-.mdc-typography--headline4 {
-  margin: 18px 9px 13.5px;
+.mdc-typography--headline4 { margin: 18px 9px 13.5px; }
+.mdc-typography--headline5 { margin: 14.4px 7.2px 10.8px; }
+@media (max-width: 450px) {
+  .mdc-typography--headline4 { font-size: 7.5vw; margin: 4vw 2vw 3vw; }
+  .mdc-typography--headline5 { font-size: 5.4vw; margin: 3.2vw 1.6vw 2.4vw; }
 }
-.mdc-typography--headline5 {
-  margin: 14.4px 7.2px 10.8px;
+
+.blue {
+  color: white;
+  background-color: #1976d2;
+}
+
+.green {
+  color: white;
+  background-color: #388e3c;
+}
+
+.red {
+  color: white;
+  background-color: #d32f2f;
+}
+
+.purple {
+  color: white;
+  background-color: #7b1fa2;
+}
+
+.gray {
+  color: white;
+  background-color: #455a64;
+}
+
+.orange {
+  color: white;
+  background-color: #f57c00;
+}
+
+.brown {
+  color: white;
+  background-color: #5d4037;
 }
 
 /////タイトル/////
@@ -77,6 +112,15 @@ body {
   .order-ticket {
     margin: 5px;
     font-size: 1.2rem;
+  }
+}
+
+#complete-container-monitor {
+  margin: 30px 20px;
+  .order-ticket {
+    margin: 5px;
+    font-size: 1.2rem;
+    zoom: 5.5;
   }
 }
 
@@ -283,6 +327,15 @@ table {
   width: 100%;
   border-spacing: 0;
   table-layout: fixed;
+  thead tr {
+    height: 40px;
+  }
+  tbody tr {
+    height: 50px;
+  }
+  th, td, button {
+    font-size: 16px;
+  }
   th, td {
     text-align: center;
     text-overflow: ellipsis;
@@ -300,14 +353,16 @@ table {
     border-bottom-color: rgba(0,0,0,.12);
   }
 }
+.header-table {
+  height: 44px;
+}
+.body-table {
+  width: 100%;
+  overflow-y: scroll;
+}
 
 //受付.html
 /////オーダー画面
-@media (max-width: 450px) {
-  .mdc-typography--headline4 { font-size: 7.5vw; margin: 4vw 2vw 3vw; }
-  .mdc-typography--headline5 { font-size: 5.4vw; margin: 3.2vw 1.6vw 2.4vw; }
-}
-
 @media (min-width: 900px) {
   .column {
     height: 100%;
@@ -388,14 +443,13 @@ table {
 }
 
 #time-table-container, #review-table-container {
-  height: calc((100% - 60px) / 2 - 80px);
-  .header-table {
-    height: 44px;
+  //height: calc((100% - 60px) / 2 - 80px);
+  tbody tr {
+    height: 35px;
   }
   .body-table {
-    height: calc(100% - 44px);
-    width: 100%;
-    overflow-y: scroll;
+    height: calc(80vh - 44px);
+    @media (min-width: 900px) { height: calc(50vh - 160px); }
   }
   .review-table-star {
     width: 100px;
@@ -407,34 +461,17 @@ table {
 #order-table-container {
   height: calc(100% - 120px);
   width: 100%;
-  vertical-align: top;
   overflow-y: hidden;
-  .header-table {
-    height: 44px;
+  @media (max-width: 500px) {
+    thead tr { height: 8vw; }
+    tbody tr { height: 10vw; }
   }
-  thead tr {
-    height: 8vw;
-    @media (min-width: 500px) { height: 40px; }
+  @media (max-width: 400px) {
+    th, td, button { font-size: 4vw; }
   }
-  tbody tr {
-    height: 10vw;
-    @media (min-width: 500px) { height: 50px; }
-  }
-  th, td, button {
-    font-size: 4vw;
-    @media (min-width: 400px) { font-size: 16px; }
-  }
-  .body-table {
-    height: calc(100% - 44px);
-    width: 100%;
-    overflow-y: scroll;
-  }
-  .body-table::-webkit-scrollbar {
-    display:none;
-  }
-  button {
-    @include mdc-button-ink-color(black);
-  }
+  .body-table { height: calc(100% - 44px); }
+  .body-table::-webkit-scrollbar { display:none; }
+  button { @include mdc-button-ink-color(black); }
 
   td:nth-child(4), th:nth-child(4) {
     width: 25% !important;
@@ -459,5 +496,22 @@ table {
   }
   @media (min-width: 801px){
     th, td { width: 12.5%; }
+  }
+  @media (min-width: 1000px){
+    display: inline-block;
+    width: 80%;
+  }
+}
+
+#item-table-container {
+  display: none;
+  height: calc(100% - 120px);
+  width: calc(20% - 20px);
+  box-shadow: -4px 0px 14px 2px rgba(0,0,0,0.3);
+  border-radius: 5px;
+  vertical-align: top;
+  button { @include mdc-button-ink-color(black); }
+  @media (min-width: 1000px) {
+    display: inline-block;
   }
 }

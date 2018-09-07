@@ -11,8 +11,10 @@ catch (ex) { messaging = null; }
 if (messaging) messaging.usePublicVapidKey('BM8Ls9TL_hP1RuMKEldeSqRTgAoLxauVwQ4DfD5geIWmjh0-4lnDrYo6TxTQMXcI4fbTlREVEvz4xhS0J_dugYA');
 import { MDCTextField } from '@material/textfield';
 import { MDCRipple } from '@material/ripple';
+import { MDCDialog } from '@material/dialog';
 Array.from(document.querySelectorAll('.mdc-text-field'), e => new MDCTextField(e));
 Array.from(document.querySelectorAll('.mdc-button'), e => new MDCRipple(e));
+const reviewDialog = new MDCDialog(document.getElementById('review-post'));
 new Swiper('#gallery', {
     loop: true,
     centeredSlides: true,
@@ -172,6 +174,7 @@ var refresh = (snapshot) => {
 };
 
 function refreshOrderStatus(d, flag) {
+    console.log(d);
     if (!d.call) {
         //呼ばれていない
         document.getElementById('status-text').textContent = '予想待ち時間: ' + Math.floor((d.orderTime.toDate().getTime() + app.targetTime * 1000 - new Date().getTime()) / 60000) + '分';
@@ -187,6 +190,7 @@ function refreshOrderStatus(d, flag) {
         //受け取った
         document.getElementById('status-text').textContent = 'ありがとうございました';
         document.getElementById('status-button').textContent = 'レビュー';
+        document.getElementById('status-button').addEventListener('click', () => reviewDialog.show());
     }
 }
 
@@ -196,31 +200,33 @@ const forceRefresh = () => app.ordersQuery.get().then(refresh);
 
 function getReting() {
     var val = 0;
-    Array.from(document.getElementsByName('rating'), (e) => val = e.checked ? e.value : 0);
+    var array = Array.from(document.getElementsByName('rating'), (e) => val = e.checked ? e.value : 0);
+    array.forEach((index) => { if (index !== 0) val = parseInt(index); });
     return val;
 }
 
-/*var confirmOK = -1;
+document.getElementById('review-start').addEventListener('click', () => {
+    if (!order) alert('オーダーを登録してください');
+    else reviewDialog.show();
+});
+
 document.getElementById('review-send').addEventListener('click', () => {
     var rating = getReting();
-    if (document.getElementById('review-secret').value === '')
-        alert('シークレットコードは必須です、注文したレシートに記載されたものを入力してください');
+    if (!order){
+        alert('オーダーを登録してください');
+    }
     else if (rating <= 0)
         alert('星評価は必須です、5段階評価してください。');
-    else {
-        if (confirmOK !== -1) clearTimeout(confirmOK);
-        var ratingString = '';
-        for (var i = 0; i < rating; i++) ratingString += '★';
-        for (var i = rating; i < 5; i++) ratingString += '☆';
-        document.getElementById('review-confirm-ok').disabled = true;
-        document.getElementById('review-confirm-description').innerText =
-            ratingString + '\n' +
-            document.getElementById('review-body').innerText + '\n\n' +
-            '3秒経つとOKが押せるようになります';
-        reviewDialog.show();
-        confirmOK = setTimeout(() => { document.getElementById('review-confirm-ok').disabled = false; }, 3000);
+    else if (false) { //////スパム
+        
     }
-});*/
+    else {
+        app.reviews.doc(order).set({ num: order, dateTime: app.getFirebaseDateTime(),
+            rate: rating, body: document.getElementById('review-body').innerText, block: false });
+        reviewDialog.close();
+        document.getElementById('review-body').innerText = '';
+    }
+});
 
 if (location.search.indexOf('article') >= 0) {
     var rect = document.getElementById('small-blog-header').getBoundingClientRect();

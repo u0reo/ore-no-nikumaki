@@ -18,6 +18,10 @@ export const fire = firebase;
 export const orders = db.collection('orders');
 export const general = orders.doc('general');
 export const ordersQuery = orders.where('cancel', '==', false).where('hand', '==', false).orderBy('orderTime');
+export const items = db.collection('items');
+export const itemsQuery = items.orderBy('dateTime');
+export const reviews = db.collection('reviews');
+export const reviewsQuery = reviews.where('block', '==', false).orderBy('dateTime', 'desc');
 export const articles = db.collection('articles');
 
 export function getFirebaseDateTime() {
@@ -25,6 +29,7 @@ export function getFirebaseDateTime() {
 }
 
 //generalの値たち
+export var limitTime = 600;
 export var targetTime = 600;
 export var estimateTime = 600;
 export var itemCount = 0;
@@ -33,6 +38,7 @@ export var completeCount = 0;
 //常に同期
 general.onSnapshot((snapshot) => {
     let d = snapshot.data();
+    limitTime = d.limitTime;
     targetTime = d.targetTime;
     estimateTime = d.estimateTime;
     itemCount = d.itemCount;

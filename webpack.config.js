@@ -10,6 +10,7 @@ module.exports = [
       'article': './src/js/article.js',
       'recept': './src/js/recept.js',
       'orderlist': './src/js/orderlist.js',
+      'left_monitor': './src/js/left_monitor.js'
     },
     output: {
       filename: '[name].bundle.js',

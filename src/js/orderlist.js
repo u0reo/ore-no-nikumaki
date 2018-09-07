@@ -1,15 +1,22 @@
 import * as app from './app';
 
 var dateOrders = {};
+var dateItems = {};
 
 setInterval(() => {
     document.getElementById('time-orderlist').innerHTML = new Date().toLocaleString();
     Object.keys(dateOrders).forEach((key) => {
-        let row = document.getElementById('order-' + key)
+        let row = document.getElementById('order-' + key);
         let sec = (new Date().getTime() - dateOrders[key].getTime()) / 1000;
         row.style.backgroundColor = 'rgba(' + (row.classList.contains('call') ? '169,130,116,' : '217,108,179,') + (sec / app.targetTime) + ')';
         document.getElementById('time-order-' + key).textContent = Math.floor(sec / 60) + ':' + ('00' + Math.floor(sec % 60)).slice(-2);
     });
+    Object.keys(dateItems).forEach((key) => {
+        let row = document.getElementById('item-' + key);
+        let sec = (new Date().getTime() - dateItems[key].getTime()) / 1000;
+        row.style.backgroundColor = 'rgba(217,108,179,' + (sec / app.limitTime) + ')';
+        document.getElementById('time-item-' + key).textContent = Math.floor(sec / 60) + ':' + ('00' + Math.floor(sec % 60)).slice(-2);
+    })
 }, 1000);
 
 app.ordersQuery.onSnapshot((snapshot) =>
@@ -36,6 +43,16 @@ app.ordersQuery.onSnapshot((snapshot) =>
     })
 );
 
+app.itemsQuery.onSnapshot((snapshot) => 
+    snapshot.docChanges().forEach((data) => {
+        if (data.type === 'added') addItem(data.doc);
+        else if (data.type === 'removed') {
+            document.getElementById('item-' + data.doc.id).remove();
+            delete dateItems[data.doc.id];
+        }
+    })
+);
+
 function addOrder(doc) {
     let d = doc.data();
     dateOrders[doc.id] = (d.call ? d.callTime.toDate() : d.orderTime.toDate());
@@ -44,7 +61,9 @@ function addOrder(doc) {
     row.classList = getClassList(d);
     let cell1 = row.insertCell(-1);
     let cell2 = row.insertCell(-1);
+    cell2.classList = 'count';
     let cell3 = row.insertCell(-1);
+    cell3.classList = 'count';
     //let cell4 = row.insertCell(-1);
     let cell5 = row.insertCell(-1);
     let cell6 = row.insertCell(-1);
@@ -59,17 +78,26 @@ function addOrder(doc) {
     cell6.id = 'time-order-' + doc.id;
     cell7.innerHTML = '<button class="mdc-button order-next">' + getActionText(d) + '</button>';
     cell7.children[0].addEventListener('click', (e) => {
-        if (contain(e, 'call')) updateData(e.target, { hand: true, handTime: app.getFirebaseDateTime() });
+        if (contain(e, 'call')) {
+            updateData(e.target, { hand: true, handTime: app.getFirebaseDateTime() });
+            let c = getCount(e.target);
+            app.general.update({ completeCount: app.completeCount + c });
+            app.itemsQuery.limit(c).get().then((snapshot) => snapshot.forEach((doc) => app.items.doc(doc.id).delete()));
+        }
         else if (contain(e, 'deliver')) {
             updateData(e.target, { call: true, callTime: app.getFirebaseDateTime() });
             sendNotification(getNum(e.target));
+            [...Array(getCount(e.target))].map(() => app.items.add({ dateTime: app.getFirebaseDateTime(), num: getNum(e.target) }));
         }
         else if (contain(e, 'ship')) updateData(e.target, { deliver: true });
         else updateData(e.target, { ship: true });
     });
     cell8.innerHTML = '<button class="mdc-button order-cancel">' + getCancelText(d) + '</button>';
     cell8.children[0].addEventListener('click', (e) => {
-        if (contain(e, 'call')) updateData(e.target, { call: false });
+        if (contain(e, 'call')) {
+            updateData(e.target, { call: false });
+            //app.items.where('num', '==', getNum(e.target)).get().then((snapshot) => snapshot.forEach((doc) => app.items.doc(doc.id).delete()));
+        }
         else if (contain(e, 'deliver')) updateData(e.target, { deliver: false });
         else if (contain(e, 'ship')) updateData(e.target, { ship: false });
         else updateData(e.target, { cancel: true });
@@ -90,6 +118,12 @@ function getParent(element) {
 
 function getNum(element) {
     return getParent(element).id.substr(6);
+}
+
+function getCount(element) {
+    let c = 0;
+    getParent(element).querySelectorAll('.count').forEach((e) => c += parseInt(e.textContent));
+    return c;
 }
 
 function sendNotification(num) {
@@ -136,3 +170,20 @@ function getCancelText(data) {
     else if (data.ship) return '×出発';
     else return '×オーダー';
 }
+
+function addItem(doc) {
+    let row = document.getElementById('item-table').insertRow(-1);
+    dateItems[doc.id] = doc.data().dateTime.toDate();
+    row.id = 'item-' + doc.id;
+    let cell1 = row.insertCell(-1);
+    let cell2 = row.insertCell(-1);
+    cell1.innerHTML = '--:--';
+    cell1.id = 'time-item-' + doc.id;
+    cell2.innerHTML = '<button class="mdc-button">破棄</button>';
+    cell2.children[0].addEventListener('click', (e) => deleteItem(e.target.parentNode.parentNode.id.substr(5)));
+}
+
+function deleteItem(id) {
+    if (confirm('本当にこの商品を破棄しますか？\n(コールの取り消しなどは自動で行いません)'))
+        app.items.doc(id).delete();
+} 
