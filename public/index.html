@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -45,7 +45,7 @@
     </div>
     </div>
     
-    <h3 id="small-blog-header" class="mdc-typography--headline5">ミニ日記</h3>
+    <h3 id="small-blog-header" class="index-header mdc-typography--headline5">ミニ日記</h3>
     <div class="overlay-container">
     <div id="small-blog" class="swiper-container">
       <div class="swiper-wrapper">
@@ -57,6 +57,15 @@
     </div>
     </div>
     <div class="mdc-typography--body2" style="text-align: right; margin-right: 5px; color: gray;">左にスワイプして過去記事へ</div>
+    
+    <h3 class="mdc-typography--headline5 index-header">レビュー</h3>
+    <div class="review-container"></div>
+    
+    <h3 class="mdc-typography--headline5 index-header">地図</h3>
+    <img id="map-image" src="map.svg" style="margin:5px; width:100%; max-width:600px; text-align: center;"/>
+    <p style="text-align: center;">筑波大学附属高校にて9/8、9/9に開催</p>
+    <button id="open-map" class="mdc-button mdc-button--raised" onclick="window.open('https://goo.gl/maps/DuhMR4ummUM2');" style="text-align: center;">Googleマップで開く</button>
+    
     <div id="status">
       <div id="status-secretcode-container">
         <p class="mdc-typography--headline6" style="margin: 10px 0 3px;">レシートの登録はこちら</p>
@@ -65,7 +74,7 @@
           <label class="mdc-floating-label" for="secretcode">シークレットコード</label>
           <div class="mdc-line-ripple"></div>
         </div>
-        <button id="secretcode-register" class="mdc-button mdc-button--outlined mdc-ripple-upgraded">登録</button>
+        <button id="secretcode-register" class="mdc-button mdc-button--outlined">登録</button>
         <p class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent mdc-text-field-helper-text--validation-msg"
           id="pw-validation-msg">レシートのQRコードの下に太文字で記載されている半角英数字6文字</p>
       </div>
@@ -75,21 +84,33 @@
         <div id="status-right">
           <div id="status-box">
             <div id="status-text"></div>
-            <button id="status-button" class="mdc-button mdc-button--outlined mdc-ripple-upgraded">地図</button>
+            <button id="status-button" class="mdc-button mdc-button--outlined">地図</button>
           </div>
-          <button id="order-delete" class="mdc-button mdc-ripple-upgraded">別のオーダー番号/レシートを登録する</button>
+          <button id="order-delete" class="mdc-button">別のオーダー番号/レシートを登録する</button>
         </div>
       </div>
       <p id="alert-browser" style="color: red; font-size: 8pt; display: none; margin: 4px 0;">iPhoneや一部のブラウザでは通知を利用できません。</p>
     </div>
-    <button id="review-start" class="mdc-button mdc-button--raised">レビュー投稿</button>
-
-    <aside id="review-post" class="mdc-dialog" role="alertdialog" aria-labelledby="review-post-label" aria-describedby="review-post-description">
+    <aside id="map-dialog" class="mdc-dialog" role="alertdialog" aria-labelledby="map-dialog-label" aria-describedby="map-dialog-description">
       <div class="mdc-dialog__surface">
         <header class="mdc-dialog__header">
-          <h2 id="review-post-label" class="mdc-dialog__header__title">レビュー</h2>
+          <h2 id="map-dialog-label" class="mdc-dialog__header__title">校内地図</h2>
         </header>
-        <section id="review-post-description" class="mdc-dialog__body">
+        <section id="map-dialog-description" class="mdc-dialog__body">
+          <img src="map.svg"/>
+        </section>
+        <footer class="mdc-dialog__footer">
+        <button id="review-send" type="button" class="mdc-button mdc-dialog__footer__button  mdc-dialog__footer__button--accept">閉じる</button>
+        </footer>
+      </div>
+      <div class="mdc-dialog__backdrop"></div>
+    </aside>
+    <aside id="review-dialog" class="mdc-dialog" role="alertdialog" aria-labelledby="review-dialog-label" aria-describedby="review-dialog-description">
+      <div class="mdc-dialog__surface">
+        <header class="mdc-dialog__header">
+          <h2 id="review-dialog-label" class="mdc-dialog__header__title">レビュー</h2>
+        </header>
+        <section id="review-dialog-description" class="mdc-dialog__body">
           <div id="review-container">
             <div id="review-rating">
               <span id="review-rating-span">
@@ -109,7 +130,7 @@
         </section>
         <footer class="mdc-dialog__footer">
           <button type="button" class="mdc-button mdc-dialog__footer__button mdc-dialog__footer__button--cancel">キャンセル</button>
-          <button id="review-send" type="button" class="mdc-button mdc-dialog__footer__button">OK</button>
+          <button id="review-send-button" type="button" class="mdc-button mdc-dialog__footer__button">OK</button>
         </footer>
       </div>
       <div class="mdc-dialog__backdrop"></div>

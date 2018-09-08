@@ -14,7 +14,8 @@ import { MDCRipple } from '@material/ripple';
 import { MDCDialog } from '@material/dialog';
 Array.from(document.querySelectorAll('.mdc-text-field'), e => new MDCTextField(e));
 Array.from(document.querySelectorAll('.mdc-button'), e => new MDCRipple(e));
-const reviewDialog = new MDCDialog(document.getElementById('review-post'));
+const reviewDialog = new MDCDialog(document.getElementById('review-dialog'), );
+const mapDialog = new MDCDialog(document.getElementById('map-dialog'));
 new Swiper('#gallery', {
     loop: true,
     centeredSlides: true,
@@ -40,7 +41,10 @@ try {
 catch (ex) { order = undefined; }
 if (order)
     app.orders.doc(order).get().then((snapshot) => {
-        if (snapshot.exists && !snapshot.data().cancel) registerOrder(order);
+        if (snapshot.exists && !snapshot.data().cancel){
+            registerOrder(order);
+            refreshOrderStatus(snapshot.data(), true);
+        }
         else deleteOrder();
     });
     
@@ -150,6 +154,7 @@ if (messaging && order) {
 
 var refresh = (snapshot) => {
     snapshot.docChanges().forEach(function (change) {
+        console.log(change);
         var d = change.doc.data();
         if (change.type === 'added' || change.type === 'modified') {
             if ((d.call) && !document.getElementById('ticket-' + change.doc.id)) {
@@ -164,6 +169,8 @@ var refresh = (snapshot) => {
         }
         if (change.type === 'removed' && document.getElementById('ticket-' + change.doc.id)) {
             document.getElementById('ticket-' + change.doc.id).remove();
+            if (d.call) d.hand = true;
+            else d.cancel = true; 
         }
 
         if (change.doc.id === order)
@@ -173,11 +180,24 @@ var refresh = (snapshot) => {
     forceRefreshIndex = setInterval(forceRefresh, 60000);
 };
 
+var hand = false;
+document.getElementById('status-button').addEventListener('click', () => {
+    if (hand) app.reviews.doc(order).get().then((snapshot) => {
+        if (snapshot.exists) {
+            setRating(snapshot.data().rate);
+            document.getElementById('review-body').value = snapshot.data().body.replace(/\\n/g, '\n');
+        }
+        reviewDialog.show();
+    })
+    else mapDialog.show();
+});
 function refreshOrderStatus(d, flag) {
-    console.log(d);
+    hand = (d.call && d.hand);
     if (!d.call) {
         //呼ばれていない
-        document.getElementById('status-text').textContent = '予想待ち時間: ' + Math.floor((d.orderTime.toDate().getTime() + app.targetTime * 1000 - new Date().getTime()) / 60000) + '分';
+        var time = Math.floor((d.orderTime.toDate().getTime() + app.targetTime * 1000 - new Date().getTime()) / 60000);
+        document.getElementById('status-text').textContent = (time > 3 ? '予想待ち時間: ' + time + '分' : '少々お待ちください');
+        document.getElementById('status-button').textContent = '地図';
     }
     else if (!d.hand) {
         //受け取っていない
@@ -190,7 +210,6 @@ function refreshOrderStatus(d, flag) {
         //受け取った
         document.getElementById('status-text').textContent = 'ありがとうございました';
         document.getElementById('status-button').textContent = 'レビュー';
-        document.getElementById('status-button').addEventListener('click', () => reviewDialog.show());
     }
 }
 
@@ -200,17 +219,15 @@ const forceRefresh = () => app.ordersQuery.get().then(refresh);
 
 function getReting() {
     var val = 0;
-    var array = Array.from(document.getElementsByName('rating'), (e) => val = e.checked ? e.value : 0);
-    array.forEach((index) => { if (index !== 0) val = parseInt(index); });
+    Array.from(document.getElementsByName('rating'), (e) => val += e.checked ? e.value : 0);
     return val;
 }
 
-document.getElementById('review-start').addEventListener('click', () => {
-    if (!order) alert('オーダーを登録してください');
-    else reviewDialog.show();
-});
+function setRating(rate) {
+    Array.from(document.getElementsByName('rating'), (e) => e.checked = (e.value === rate.toString()));
+}
 
-document.getElementById('review-send').addEventListener('click', () => {
+document.getElementById('review-send-button').addEventListener('click', () => {
     var rating = getReting();
     if (!order){
         alert('オーダーを登録してください');
@@ -221,10 +238,10 @@ document.getElementById('review-send').addEventListener('click', () => {
         
     }
     else {
-        app.reviews.doc(order).set({ num: order, dateTime: app.getFirebaseDateTime(),
-            rate: rating, body: document.getElementById('review-body').innerText, block: false });
+        app.reviews.doc(order).set({ num: parseInt(order), dateTime: app.getFirebaseDateTime(),
+            rate: rating, body: document.getElementById('review-body').value.replace(/\n/g, '\\n'), block: false });
         reviewDialog.close();
-        document.getElementById('review-body').innerText = '';
+        document.getElementById('review-body').value = '';
     }
 });
 
@@ -286,3 +303,30 @@ app.articles.get().then((snapshot) => {
     var jumpElement = document.getElementById('slide--' + articleId);
     if (jumpElement) swiper.slideTo(([].slice.call(smallBlog.childNodes)).indexOf(jumpElement));
 });
+
+app.reviewsQuery.onSnapshot((snapshot) =>
+    snapshot.docChanges().forEach((data) => {
+        if (data.type === 'added') addReview(data.doc);
+        else if (data.type === 'modified') {
+            document.getElementById('review-' + data.doc.id).remove();
+            if (!data.doc.data().block) addReview(data.doc)
+        } else if (data.type === 'removed')
+            document.getElementById('review-' + data.doc.id).remove();
+    })
+);
+
+function addReview(doc) {
+    let d = doc.data();
+    let div = document.createElement('div');
+    row.id = 'review-' + doc.id;
+    let cell1 = row.insertCell(-1);
+    let cell2 = row.insertCell(-1);
+    let cell3 = row.insertCell(-1);
+    for (let i = 0; i < d.rate; i++) cell1.innerHTML += '★';
+    for (let i = d.rate; i < 5; i++) cell1.innerHTML += '☆';
+    cell2.innerHTML = d.body.replace(/\\n/g, '<br>');
+    cell3.innerHTML = '<button class="mdc-button">ブロック</button>';
+    cell3.children[0].addEventListener('click', (e) => app.reviews.doc(doc.id).update({
+        block: true
+    }));
+}

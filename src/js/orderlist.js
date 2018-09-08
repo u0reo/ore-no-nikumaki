@@ -4,7 +4,7 @@ var dateOrders = {};
 var dateItems = {};
 
 setInterval(() => {
-    document.getElementById('time-orderlist').innerHTML = new Date().toLocaleString();
+    document.getElementById('time-orderlist').innerHTML = app.getDatetime(new Date());
     Object.keys(dateOrders).forEach((key) => {
         let row = document.getElementById('order-' + key);
         let sec = (new Date().getTime() - dateOrders[key].getTime()) / 1000;
@@ -83,14 +83,30 @@ function addOrder(doc) {
             let c = getCount(e.target);
             app.general.update({ completeCount: app.completeCount + c });
             app.itemsQuery.limit(c).get().then((snapshot) => snapshot.forEach((doc) => app.items.doc(doc.id).delete()));
+            setTimeout(() => app.orders.where('hand', '==', true).orderBy('orderTime', 'desc').limit(10).get().then((snapshot) => {
+                let time = 0;
+                snapshot.docs.forEach((doc) => {
+                    time += (doc.handTime.toDate().getTime() - doc.callTime.toDate().getTime()) / 1000;
+                });
+                app.general.update({ averageCallHandTime: time / snapshot.size });
+            }), 1000);
         }
         else if (contain(e, 'deliver')) {
             updateData(e.target, { call: true, callTime: app.getFirebaseDateTime() });
             sendNotification(getNum(e.target));
             [...Array(getCount(e.target))].map(() => app.items.add({ dateTime: app.getFirebaseDateTime(), num: getNum(e.target) }));
+            setTimeout(() => app.orders.where('call', '==', true).orderBy('orderTime', 'desc').limit(10).get().then((snapshot) => {
+                let time = 0;
+                snapshot.docs.forEach((doc) => {
+                    time += ((doc.callTime.toDate().getTime() - doc.orderTime.toDate().getTime()) / doc.leftCount) / 1000;
+                });
+                app.general.update({ averageOrderCallTime: time / snapshot.size });
+            }), 1000);
         }
         else if (contain(e, 'ship')) updateData(e.target, { deliver: true });
         else updateData(e.target, { ship: true });
+        e.target.disabled = true;
+        setTimeout(() => { e.target.disabled = false; }, 2000);
     });
     cell8.innerHTML = '<button class="mdc-button order-cancel">' + getCancelText(d) + '</button>';
     cell8.children[0].addEventListener('click', (e) => {
@@ -100,7 +116,11 @@ function addOrder(doc) {
         }
         else if (contain(e, 'deliver')) updateData(e.target, { deliver: false });
         else if (contain(e, 'ship')) updateData(e.target, { ship: false });
-        else updateData(e.target, { cancel: true });
+        else {
+            updateData(e.target, { cancel: true });
+            app.general.update({ itemCount: app.itemCount - getCount(e.target) });
+        }
+        setTimeout(() => { e.target.disabled = false; }, 2000);
     });
 }
 
@@ -184,6 +204,8 @@ function addItem(doc) {
 }
 
 function deleteItem(id) {
-    if (confirm('本当にこの商品を破棄しますか？\n(コールの取り消しなどは自動で行いません)'))
+    if (confirm('本当にこの商品を破棄しますか？\n(コールの取り消しなどは自動で行いません)')){
         app.items.doc(id).delete();
+        app.general.update({ itemCount: app.itemCount + 1 });
+    }
 } 

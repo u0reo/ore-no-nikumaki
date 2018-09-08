@@ -34,11 +34,20 @@ body {
   margin: 0 10px !important;
 }
 
+button {
+  //display: block !important;
+}
+
 .mdc-typography--headline4 { margin: 18px 9px 13.5px; }
 .mdc-typography--headline5 { margin: 14.4px 7.2px 10.8px; }
 @media (max-width: 450px) {
   .mdc-typography--headline4 { font-size: 7.5vw; margin: 4vw 2vw 3vw; }
   .mdc-typography--headline5 { font-size: 5.4vw; margin: 3.2vw 1.6vw 2.4vw; }
+}
+
+.index-header {
+  padding-bottom: .5em;
+  border-bottom: 2px solid #7ED1E6;
 }
 
 .blue {
@@ -119,9 +128,11 @@ body {
   margin: 30px 20px;
   .order-ticket {
     margin: 5px;
+    font-weight: 500;
     font-size: 1.2rem;
-    zoom: 5.5;
+    zoom: 6.6;
   }
+  
 }
 
 /////番号札
@@ -256,7 +267,6 @@ body {
       min-height: 24px;
       width: 30%;
       min-width: unset;
-      text-align: right;
       font-size: 0.7em;
       padding: 5px 0;
     }
@@ -264,12 +274,20 @@ body {
 }
 
 /////中央寄せ
-#title, .mdc-card__media {
+#title, .mdc-card__media, #map-dialog .mdc-dialog__body, #map-image, #open-map {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+#map-dialog {
+  img {
+    height: 100%;
+    width: 100%;
+    max-height: calc(100vh - 240px);
+    max-width: 90vw;
+  }
+}
 
 #review-container {
   margin: 0 10px;
@@ -451,9 +469,19 @@ table {
     height: calc(80vh - 44px);
     @media (min-width: 900px) { height: calc(50vh - 160px); }
   }
-  .review-table-star {
+}
+
+#review-table-container {
+  td:nth-child(1), th:nth-child(1) {
     width: 100px;
   }
+  td:nth-child(2), th:nth-child(2) {
+    white-space: normal;
+    text-align: left;
+  } 
+  td:nth-child(3), th:nth-child(3) {
+    width: 80px;
+  } 
 }
 
 

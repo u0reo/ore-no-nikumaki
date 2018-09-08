@@ -1,3 +1,5 @@
+'use strict'
+
 import * as app from './app';
 
 import { MDCTextField } from '@material/textfield';
@@ -22,7 +24,7 @@ Array.from(document.querySelectorAll('.button-down'), e => {
     })
 });
 
-setInterval(() => { document.getElementById('time-recept').innerHTML = new Date().toLocaleString(); }, 1000);
+setInterval(() => { document.getElementById('time-recept').innerHTML = app.getDatetime(new Date()); }, 1000);
 
 var confirmOK = -1;
 var lastOrderData = null;
@@ -44,9 +46,9 @@ document.getElementById('order-send').addEventListener('click', () => {
                     '<div style="color:red;">★複数この注文があります。<br>必ずまとめてしか受け取れないことを確認してください。<br>分けて受け取る場合は別々の注文にしてください。</div><br>': '') +
                 '確定すると自動でレシートが印刷されます<br>' +
                 '受け取る際に<b>レシートを見せる</b>かレシートを登録した<b>スマホを見せる</b>ことが必要なことを説明してください。<br>' +
-                '3秒経つと「オーダー確定」が押せるようになります';
+                '2秒経つと「オーダー確定」が押せるようになります';
             orderDialog.show();
-            confirmOK = setTimeout(() => { document.getElementById('order-confirm-ok').disabled = false; }, 3000);
+            confirmOK = setTimeout(() => { document.getElementById('order-confirm-ok').disabled = false; }, 2000);
         });
 });
 orderDialog.listen('MDCDialog:accept', () => {
@@ -99,7 +101,8 @@ function addTicketDB(num, taretare, shioshio, tareshio, then) {
         if (snapshot.empty) {
             lastOrderData = { num: parseInt(num), secretCode: createCode(),
                 taretare: parseInt(taretare), shioshio: parseInt(shioshio), tareshio: parseInt(tareshio), devices: [],
-                orderTime: app.getFirebaseDateTime(), ship: false, deliver: false, call: false, hand: false, cancel: false };
+                orderTime: app.getFirebaseDateTime(), ship: false, deliver: false, call: false, hand: false, cancel: false,
+                leftCount: app.itemCount - app.completeCount + parseInt(taretare) + parseInt(shioshio) + parseInt(tareshio) }
             app.orders.doc(num).set(lastOrderData);
             app.general.update({ itemCount: (app.itemCount + parseInt(taretare) + parseInt(shioshio) + parseInt(tareshio)) });
             then();
@@ -118,7 +121,13 @@ function createCode() {
     return r;
 }
 
-app.generalRefresh(() => document.getElementById('nonfinished-count').textContent = '未完成数: ' + (app.itemCount - app.completeCount) +'個');
+app.generalRefresh(() => {
+    document.getElementById('item-count').textContent = '販売済み数: ' + app.itemCount + '個/1200個';
+    document.getElementById('kinken-sheet').textContent = '金券シート: ' + (Math.floor(app.itemCount * 3 / 30) + 1) + '枚目のシート ' + app.itemCount * 3 % 30 + '枚';
+    document.getElementById('nonfinished-count').textContent = '未完成数: ' + (app.itemCount - app.completeCount) +'パック';
+    document.getElementById('avaeage-call-hand-time').textContent = 'コールから受け渡しまでの平均時間: ' +  Math.ceil(app.averageCallHandTime / 60) + '分';
+    document.getElementById('avaeage-order-hand-time').textContent = 'パック作る平均時間: ' + Math.ceil(app.averageOrderCallTime / 60) + '分';
+});
 const refresh = (snapshot) => {
     document.getElementById('longest-wait').textContent = '最長待ち時間: ' + (snapshot.empty ? 'なし' :
             Math.ceil((new Date().getTime() - snapshot.docs[0].data().orderTime.toDate().getTime()) / 60000) + '分');
@@ -151,7 +160,7 @@ function addReview(doc) {
     let cell3 = row.insertCell(-1);
     for (let i = 0; i < d.rate; i++) cell1.innerHTML += '★';
     for (let i = d.rate; i < 5; i++) cell1.innerHTML += '☆';
-    cell2.innerHTML = d.body;
+    cell2.innerHTML = d.body.replace(/\\n/g, '<br>');
     cell3.innerHTML = '<button class="mdc-button">ブロック</button>';
     cell3.children[0].addEventListener('click', (e) => app.reviews.doc(doc.id).update({ block: true }));
 }

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>俺の肉巻き 注文一覧</title>
+    <title>俺の肉巻き 下のモニター</title>
     <link rel="stylesheet" href="bundle.css">
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
@@ -18,9 +18,18 @@
     <link rel="icon" type="image/png" sizes="256x256" href="icon-256x256.png">
     <link rel="icon" type="image/png" sizes="512x512" href="icon-512x512.png">
   </head>
-  <body>
-    <div id="complete-container-monitor">
+  <body style="margin: 0 !important; ">
+    <h3 class="mdc-typography--headline1" style="color: white; background-color: #d91c97; margin: 0; padding: 25px 20px; text-align: center;">予想待ち時間</h3>
+    <div style="text-align: center;">
+      <span id="estimate" style="font-size: 220pt;">15</span>
+      <span style="font-size: 90pt; margin-left: 30px;">分程度</span>
     </div>
-  <script src="js/left_monitor.bundle.js"></script>
+    <h3 class="mdc-typography--headline1" style="color: white; background-color: #d91c97; margin: 0; padding: 25px 20px; text-align: center;">お知らせ</h3>
+    <div style="text-align: center; font-size: 70pt;">
+      この順番案内は<br>
+      https://俺の肉巻き.tk<br>
+      でも行っています。
+    </div>
+  <script src="js/bottom_monitor.bundle.js"></script>
   </body>
 </html>
